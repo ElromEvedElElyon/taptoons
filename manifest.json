@@ -1,11 +1,12 @@
 {
+  "id": "/",
   "name": "TapToons - Funny Sound Effects",
   "short_name": "TapToons",
   "description": "Shake it. Tap it. Laugh! Funny cartoon sounds when you shake or tap your device. Family-friendly fun for all ages.",
-  "start_url": "/",
+  "start_url": ".",
   "display": "standalone",
-  "background_color": "#1A1A2E",
-  "theme_color": "#FF6B35",
+  "background_color": "#0A0A1A",
+  "theme_color": "#0A0A1A",
   "orientation": "portrait",
   "categories": ["entertainment", "games"],
   "lang": "en",
@@ -39,14 +40,6 @@
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "any maskable"
-    }
-  ],
-  "screenshots": [
-    {
-      "src": "icons/screenshot-1.png",
-      "sizes": "1080x1920",
-      "type": "image/png",
-      "form_factor": "narrow"
     }
   ]
 }

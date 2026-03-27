@@ -2,1187 +2,922 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <meta name="description" content="TapToons - Funny sound effects when you shake or tap your device! Family-friendly fun for all ages.">
-    <meta name="theme-color" content="#FF6B35">
+    <meta name="theme-color" content="#0A0A1A">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="apple-mobile-web-app-title" content="TapToons">
+    <meta name="format-detection" content="telephone=no">
     <link rel="manifest" href="manifest.json">
     <link rel="apple-touch-icon" href="icons/icon-192.png">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
     <title>TapToons - Funny Tap & Shake Sounds</title>
     <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-
-        :root {
-            --primary: #FF6B35;
-            --secondary: #FFD166;
-            --accent: #06D6A0;
-            --dark: #1A1A2E;
-            --light: #FAFAFA;
-            --pink: #EF476F;
-            --blue: #118AB2;
+        *{margin:0;padding:0;box-sizing:border-box}
+        :root{
+            --primary:#FF6B35;--primary-glow:#FF6B3560;
+            --secondary:#FFD166;--accent:#06D6A0;--accent-glow:#06D6A040;
+            --bg:#0A0A1A;--surface:#12122A;--surface2:#1A1A3A;--surface3:#22224A;
+            --glass:rgba(255,255,255,0.04);--glass-border:rgba(255,255,255,0.08);
+            --text:#F0F0F8;--text2:#A0A0C0;--text3:#606080;
+            --radius:20px;--radius-lg:28px;--radius-xl:36px;
         }
-
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            background: var(--dark);
-            color: var(--light);
-            min-height: 100vh;
-            overflow-x: hidden;
-            -webkit-user-select: none;
-            user-select: none;
-            -webkit-tap-highlight-color: transparent;
+        @keyframes gradientShift{
+            0%{background-position:0% 50%}50%{background-position:100% 50%}100%{background-position:0% 50%}
         }
-
-        /* Header */
-        .header {
-            text-align: center;
-            padding: 20px 16px 10px;
-            position: relative;
+        @keyframes float{
+            0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}
         }
-        .logo {
-            font-size: 42px;
-            font-weight: 900;
-            background: linear-gradient(135deg, var(--primary), var(--secondary), var(--accent));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-            letter-spacing: -1px;
+        @keyframes pulseGlow{
+            0%,100%{box-shadow:0 0 20px var(--primary-glow),0 0 60px transparent}
+            50%{box-shadow:0 0 30px var(--primary-glow),0 0 80px var(--primary-glow)}
         }
-        .tagline {
-            font-size: 14px;
-            color: #888;
-            margin-top: 2px;
+        @keyframes shimmer{
+            0%{background-position:-200% 0}100%{background-position:200% 0}
         }
-
-        /* Main Tap Zone */
-        .tap-zone {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin: 16px auto;
-            width: 280px;
-            height: 280px;
-            border-radius: 50%;
-            background: radial-gradient(circle at 30% 30%, #2a2a4e, var(--dark));
-            border: 4px solid var(--primary);
-            cursor: pointer;
-            transition: all 0.15s ease;
-            position: relative;
-            overflow: hidden;
+        @keyframes scaleIn{
+            0%{transform:scale(0.8);opacity:0}100%{transform:scale(1);opacity:1}
         }
-        .tap-zone:active, .tap-zone.active {
-            transform: scale(0.92);
-            border-color: var(--accent);
-            background: radial-gradient(circle at 50% 50%, #3a3a5e, var(--dark));
+        @keyframes slideUp{
+            0%{transform:translateY(30px);opacity:0}100%{transform:translateY(0);opacity:1}
         }
-        .tap-zone .emoji {
-            font-size: 100px;
-            transition: transform 0.1s;
-            pointer-events: none;
+        @keyframes rippleAnim{
+            0%{width:0;height:0;opacity:0.6}100%{width:350px;height:350px;opacity:0}
         }
-        .tap-zone.active .emoji {
-            transform: scale(1.3) rotate(15deg);
+        @keyframes barPulse{
+            0%,100%{transform:scaleY(0.2)}50%{transform:scaleY(1)}
         }
-        .tap-zone .ripple {
-            position: absolute;
-            border-radius: 50%;
-            background: rgba(255, 107, 53, 0.3);
-            animation: rippleAnim 0.6s ease-out forwards;
-            pointer-events: none;
+        @keyframes orbFloat{
+            0%{transform:translate(0,0) scale(1)}
+            25%{transform:translate(30px,-20px) scale(1.1)}
+            50%{transform:translate(-10px,-40px) scale(0.9)}
+            75%{transform:translate(-30px,-10px) scale(1.05)}
+            100%{transform:translate(0,0) scale(1)}
         }
-        @keyframes rippleAnim {
-            0% { width: 0; height: 0; opacity: 1; }
-            100% { width: 300px; height: 300px; opacity: 0; }
+        @keyframes starTwinkle{
+            0%,100%{opacity:0.2;transform:scale(0.5)}50%{opacity:1;transform:scale(1)}
         }
-
-        /* Shake Indicator */
-        .shake-indicator {
-            text-align: center;
-            padding: 8px;
-            font-size: 13px;
-            color: #666;
+        @keyframes ringExpand{
+            0%{transform:scale(0.8);opacity:0.6}100%{transform:scale(1.3);opacity:0}
         }
-        .shake-indicator.active {
-            color: var(--accent);
-            font-weight: 600;
+        body{
+            font-family:'Inter',system-ui,-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
+            background:var(--bg);color:var(--text);min-height:100vh;min-height:100dvh;
+            overflow-x:hidden;-webkit-user-select:none;user-select:none;
+            -webkit-tap-highlight-color:transparent;
+            padding:env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
         }
-
-        /* Sound Packs */
-        .packs-section {
-            padding: 16px;
+        /* AMBIENT BACKGROUND */
+        .ambient{
+            position:fixed;top:0;left:0;right:0;bottom:0;pointer-events:none;z-index:0;overflow:hidden;
         }
-        .packs-title {
-            font-size: 18px;
-            font-weight: 700;
-            margin-bottom: 12px;
-            display: flex;
-            align-items: center;
-            gap: 8px;
+        .ambient .orb{
+            position:absolute;border-radius:50%;filter:blur(80px);opacity:0.3;
+            animation:orbFloat 20s ease-in-out infinite;
         }
-        .packs-grid {
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 10px;
+        .ambient .orb:nth-child(1){width:300px;height:300px;background:#FF6B35;top:-50px;right:-80px;animation-delay:0s}
+        .ambient .orb:nth-child(2){width:250px;height:250px;background:#06D6A0;bottom:20%;left:-60px;animation-delay:-7s}
+        .ambient .orb:nth-child(3){width:200px;height:200px;background:#FFD166;top:40%;right:10%;animation-delay:-14s;opacity:0.15}
+        .ambient .star{
+            position:absolute;width:3px;height:3px;background:#fff;border-radius:50%;
+            animation:starTwinkle 3s ease-in-out infinite;
         }
-        .pack-btn {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 4px;
-            padding: 12px 6px;
-            border-radius: 16px;
-            border: 2px solid transparent;
-            background: #2a2a4e;
-            cursor: pointer;
-            transition: all 0.2s;
-            position: relative;
+        /* MAIN CONTENT */
+        .app{position:relative;z-index:1;max-width:440px;margin:0 auto;padding-bottom:40px}
+        /* HEADER */
+        .header{text-align:center;padding:32px 20px 16px;animation:slideUp 0.6s ease-out}
+        .logo{
+            font-size:46px;font-weight:900;letter-spacing:-2px;line-height:1;
+            background:linear-gradient(135deg,#FF6B35 0%,#FFD166 40%,#06D6A0 70%,#FF6B35 100%);
+            background-size:300% 300%;
+            -webkit-background-clip:text;background-clip:text;
+            -webkit-text-fill-color:transparent;color:transparent;
+            animation:gradientShift 6s ease-in-out infinite;
+            filter:drop-shadow(0 2px 10px rgba(255,107,53,0.3));
         }
-        .pack-btn.selected {
-            border-color: var(--primary);
-            background: #3a3a5e;
+        .tagline{
+            font-size:14px;font-weight:500;color:var(--text2);
+            margin-top:6px;letter-spacing:0.5px;
         }
-        .pack-btn .pack-emoji {
-            font-size: 32px;
+        .tagline span{
+            background:linear-gradient(90deg,var(--primary),var(--secondary));
+            -webkit-background-clip:text;background-clip:text;
+            -webkit-text-fill-color:transparent;color:transparent;font-weight:700;
         }
-        .pack-btn .pack-name {
-            font-size: 10px;
-            color: #aaa;
-            text-align: center;
+        /* TAP ZONE — THE HERO */
+        .tap-zone-wrapper{
+            display:flex;align-items:center;justify-content:center;
+            padding:8px 0 4px;animation:scaleIn 0.5s ease-out 0.2s both;
         }
-        .pack-btn.locked::after {
-            content: '🔒';
-            position: absolute;
-            top: 4px;
-            right: 4px;
-            font-size: 12px;
+        .tap-zone{
+            position:relative;width:260px;height:260px;
+            border-radius:50%;cursor:pointer;
+            display:flex;align-items:center;justify-content:center;
+            background:radial-gradient(circle at 35% 35%,var(--surface3),var(--surface),var(--bg));
+            box-shadow:
+                0 0 0 2px var(--glass-border),
+                0 0 30px var(--primary-glow),
+                inset 0 -4px 12px rgba(0,0,0,0.4),
+                inset 0 4px 12px rgba(255,255,255,0.03);
+            transition:transform 0.12s cubic-bezier(0.34,1.56,0.64,1),box-shadow 0.2s ease;
+            touch-action:none;
+            animation:pulseGlow 4s ease-in-out infinite;
         }
-        .pack-btn.locked {
-            opacity: 0.5;
+        .tap-zone::before{
+            content:'';position:absolute;inset:-3px;border-radius:50%;
+            background:conic-gradient(from 0deg,var(--primary),var(--secondary),var(--accent),var(--primary));
+            opacity:0.4;z-index:-1;transition:opacity 0.3s;
         }
-
-        /* Stats */
-        .stats {
-            display: flex;
-            justify-content: space-around;
-            padding: 16px;
-            background: #16162b;
-            margin: 16px;
-            border-radius: 16px;
+        .tap-zone::after{
+            content:'';position:absolute;inset:0;border-radius:50%;
+            background:radial-gradient(circle at 30% 25%,rgba(255,255,255,0.08),transparent 50%);
+            pointer-events:none;
         }
-        .stat {
-            text-align: center;
+        .tap-zone:active,.tap-zone.active{
+            transform:scale(0.88);
+            box-shadow:0 0 0 2px var(--accent),0 0 50px var(--accent-glow),
+                inset 0 -4px 12px rgba(0,0,0,0.6),inset 0 4px 12px rgba(255,255,255,0.05);
         }
-        .stat-num {
-            font-size: 24px;
-            font-weight: 800;
-            color: var(--secondary);
+        .tap-zone:active::before,.tap-zone.active::before{opacity:0.8}
+        .tap-zone .emoji{font-size:90px;transition:transform 0.12s cubic-bezier(0.34,1.56,0.64,1);pointer-events:none;filter:drop-shadow(0 4px 12px rgba(0,0,0,0.3))}
+        .tap-zone.active .emoji{transform:scale(1.25) rotate(12deg)}
+        .tap-zone .ripple{
+            position:absolute;border-radius:50%;
+            background:radial-gradient(circle,rgba(255,107,53,0.4),rgba(6,214,160,0.1),transparent);
+            animation:rippleAnim 0.7s cubic-bezier(0,0.5,0.5,1) forwards;
+            pointer-events:none;
         }
-        .stat-label {
-            font-size: 11px;
-            color: #666;
+        /* RING EFFECTS around tap zone */
+        .ring{
+            position:absolute;width:260px;height:260px;border-radius:50%;
+            border:1px solid var(--primary);opacity:0;pointer-events:none;
         }
-
-        /* Sensitivity Slider */
-        .controls {
-            padding: 0 16px 16px;
+        .ring.active{animation:ringExpand 0.6s ease-out forwards}
+        /* SHAKE INDICATOR */
+        .shake-indicator{
+            text-align:center;padding:8px 20px;font-size:13px;font-weight:500;
+            color:var(--text3);transition:all 0.3s ease;
         }
-        .control-row {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            margin-bottom: 8px;
+        .shake-indicator.active{
+            color:var(--accent);
+            text-shadow:0 0 20px var(--accent-glow);
         }
-        .control-label {
-            font-size: 12px;
-            color: #888;
-            min-width: 80px;
+        /* VISUALIZER */
+        .visualizer{
+            display:flex;align-items:flex-end;justify-content:center;
+            gap:3px;height:40px;margin:4px 20px 12px;
         }
-        .control-row input[type="range"] {
-            flex: 1;
-            height: 6px;
-            -webkit-appearance: none;
-            background: #2a2a4e;
-            border-radius: 3px;
-            outline: none;
+        .visualizer .bar{
+            width:4px;border-radius:4px;
+            background:linear-gradient(to top,var(--primary),var(--secondary));
+            transition:height 0.08s ease;transform-origin:bottom;
         }
-        .control-row input[type="range"]::-webkit-slider-thumb {
-            -webkit-appearance: none;
-            width: 20px;
-            height: 20px;
-            border-radius: 50%;
-            background: var(--primary);
-            cursor: pointer;
+        /* STATS CARD */
+        .stats-card{
+            display:flex;justify-content:space-around;
+            margin:0 16px 16px;padding:18px 12px;
+            background:var(--glass);
+            backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);
+            border:1px solid var(--glass-border);border-radius:var(--radius);
+            animation:slideUp 0.6s ease-out 0.3s both;
         }
-
-        /* Premium Banner */
-        .premium-banner {
-            margin: 16px;
-            padding: 20px;
-            background: linear-gradient(135deg, #2a1a4e, #1a2a5e);
-            border-radius: 20px;
-            border: 1px solid rgba(255, 107, 53, 0.3);
-            text-align: center;
+        .stat{text-align:center}
+        .stat-num{
+            font-size:28px;font-weight:800;
+            font-variant-numeric:tabular-nums;
+            background:linear-gradient(135deg,var(--secondary),var(--primary));
+            -webkit-background-clip:text;background-clip:text;
+            -webkit-text-fill-color:transparent;color:transparent;
         }
-        .premium-banner h3 {
-            font-size: 20px;
-            margin-bottom: 4px;
-            background: linear-gradient(135deg, var(--secondary), var(--primary));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
+        .stat-label{font-size:10px;font-weight:600;color:var(--text3);letter-spacing:1.5px;text-transform:uppercase;margin-top:2px}
+        /* SOUND PACKS */
+        .section{padding:0 16px;margin-bottom:16px;animation:slideUp 0.6s ease-out 0.4s both}
+        .section-title{
+            font-size:16px;font-weight:700;margin-bottom:12px;
+            display:flex;align-items:center;gap:8px;
+            color:var(--text);
         }
-        .premium-banner p {
-            font-size: 13px;
-            color: #999;
-            margin-bottom: 16px;
+        .section-title .badge{
+            font-size:10px;font-weight:600;
+            background:linear-gradient(135deg,var(--primary),var(--secondary));
+            color:var(--bg);padding:2px 8px;border-radius:20px;
         }
-        .premium-price {
-            font-size: 28px;
-            font-weight: 900;
-            color: var(--light);
-            margin-bottom: 4px;
+        .packs-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
+        .pack-btn{
+            display:flex;flex-direction:column;align-items:center;gap:6px;
+            padding:14px 6px 10px;border-radius:var(--radius);
+            border:1.5px solid transparent;
+            background:var(--glass);
+            backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);
+            cursor:pointer;transition:all 0.25s cubic-bezier(0.34,1.56,0.64,1);
+            position:relative;overflow:hidden;
         }
-        .premium-price .original {
-            text-decoration: line-through;
-            font-size: 16px;
-            color: #666;
+        .pack-btn::before{
+            content:'';position:absolute;inset:0;
+            background:linear-gradient(135deg,rgba(255,107,53,0.1),transparent);
+            opacity:0;transition:opacity 0.3s;border-radius:inherit;
         }
-        .premium-features {
-            text-align: left;
-            padding: 12px 0;
+        .pack-btn:active{transform:scale(0.92)}
+        .pack-btn.selected{
+            border-color:var(--primary);
+            background:rgba(255,107,53,0.08);
+            box-shadow:0 0 20px var(--primary-glow),inset 0 0 20px rgba(255,107,53,0.05);
         }
-        .premium-features li {
-            list-style: none;
-            padding: 4px 0;
-            font-size: 13px;
-            color: #bbb;
+        .pack-btn.selected::before{opacity:1}
+        .pack-btn .pack-emoji{font-size:30px;transition:transform 0.2s ease}
+        .pack-btn.selected .pack-emoji{transform:scale(1.15);animation:float 2s ease-in-out infinite}
+        .pack-btn .pack-name{font-size:10px;font-weight:600;color:var(--text2);letter-spacing:0.3px}
+        .pack-btn.locked{opacity:0.45}
+        .pack-btn.locked::after{
+            content:'';position:absolute;top:6px;right:6px;
+            width:16px;height:16px;
+            background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='%23FFD166' viewBox='0 0 24 24'%3E%3Cpath d='M18 8h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zM12 17c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zm3.1-9H8.9V6c0-1.71 1.39-3.1 3.1-3.1s3.1 1.39 3.1 3.1v2z'/%3E%3C/svg%3E") center/contain no-repeat;
         }
-        .premium-features li::before {
-            content: '✅ ';
+        /* CONTROLS */
+        .controls{padding:0 16px;margin-bottom:8px;animation:slideUp 0.6s ease-out 0.5s both}
+        .control-row{
+            display:flex;align-items:center;gap:12px;
+            margin-bottom:10px;
+            background:var(--glass);border:1px solid var(--glass-border);
+            border-radius:14px;padding:12px 16px;
         }
-        .btn-buy {
-            display: inline-block;
-            width: 100%;
-            padding: 14px;
-            border: none;
-            border-radius: 14px;
-            font-size: 16px;
-            font-weight: 700;
-            cursor: pointer;
-            transition: transform 0.1s;
-            margin-bottom: 8px;
+        .control-row label{
+            font-size:12px;font-weight:600;color:var(--text2);
+            min-width:76px;letter-spacing:0.3px;
         }
-        .btn-buy:active { transform: scale(0.97); }
-        .btn-stripe {
-            background: linear-gradient(135deg, var(--primary), #e55a2b);
-            color: white;
+        .control-row input[type="range"]{
+            flex:1;height:6px;-webkit-appearance:none;appearance:none;
+            background:var(--surface2);border-radius:10px;outline:none;
         }
-        .btn-paypal {
-            background: #0070ba;
-            color: white;
+        .control-row input[type="range"]::-webkit-slider-thumb{
+            -webkit-appearance:none;appearance:none;width:22px;height:22px;
+            border-radius:50%;
+            background:linear-gradient(135deg,var(--primary),var(--secondary));
+            cursor:pointer;
+            box-shadow:0 2px 8px var(--primary-glow);
+            transition:transform 0.15s ease;
         }
-        .btn-buy-small {
-            font-size: 11px;
-            color: #666;
+        .control-row input[type="range"]::-webkit-slider-thumb:active{transform:scale(1.2)}
+        .control-row input[type="range"]::-moz-range-thumb{
+            width:22px;height:22px;border:none;border-radius:50%;
+            background:linear-gradient(135deg,var(--primary),var(--secondary));
+            cursor:pointer;box-shadow:0 2px 8px var(--primary-glow);
         }
-
-        /* Volume bars animation */
-        .volume-bars {
-            display: flex;
-            align-items: flex-end;
-            justify-content: center;
-            gap: 3px;
-            height: 30px;
-            margin: 8px 0;
+        /* PREMIUM BANNER */
+        .premium-card{
+            margin:16px;padding:28px 24px;
+            background:linear-gradient(145deg,rgba(30,15,60,0.9),rgba(15,25,60,0.9));
+            backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);
+            border-radius:var(--radius-lg);
+            border:1px solid rgba(255,107,53,0.15);
+            position:relative;overflow:hidden;
+            animation:slideUp 0.6s ease-out 0.6s both;
         }
-        .volume-bars .bar {
-            width: 4px;
-            background: var(--primary);
-            border-radius: 2px;
-            transition: height 0.1s;
+        .premium-card::before{
+            content:'';position:absolute;top:-50%;right:-50%;
+            width:200%;height:200%;
+            background:conic-gradient(from 180deg,transparent,rgba(255,107,53,0.06),transparent,rgba(6,214,160,0.04),transparent);
+            animation:gradientShift 8s linear infinite;
         }
-
-        /* Footer */
-        .footer {
-            text-align: center;
-            padding: 20px;
-            font-size: 11px;
-            color: #444;
+        .premium-card>*{position:relative;z-index:1}
+        .premium-label{
+            display:inline-block;font-size:10px;font-weight:700;
+            letter-spacing:2px;text-transform:uppercase;
+            background:linear-gradient(135deg,var(--primary),var(--secondary));
+            color:var(--bg);padding:4px 12px;border-radius:20px;
+            margin-bottom:12px;
         }
-        .footer a { color: #666; text-decoration: none; }
-
-        /* Toast */
-        .toast {
-            position: fixed;
-            top: 20px;
-            left: 50%;
-            transform: translateX(-50%) translateY(-100px);
-            background: var(--accent);
-            color: var(--dark);
-            padding: 12px 24px;
-            border-radius: 30px;
-            font-weight: 700;
-            font-size: 14px;
-            transition: transform 0.3s ease;
-            z-index: 100;
+        .premium-card h3{
+            font-size:24px;font-weight:800;margin-bottom:6px;
+            background:linear-gradient(135deg,#fff,var(--secondary));
+            -webkit-background-clip:text;background-clip:text;
+            -webkit-text-fill-color:transparent;color:transparent;
         }
-        .toast.show {
-            transform: translateX(-50%) translateY(0);
+        .premium-card .subtitle{font-size:14px;color:var(--text2);margin-bottom:20px;line-height:1.5}
+        .premium-price-row{
+            display:flex;align-items:baseline;gap:10px;margin-bottom:6px;
         }
-
-        /* Bounce animation on shake */
-        @keyframes bounce {
-            0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(-20px); }
+        .premium-price-now{font-size:44px;font-weight:900;color:#fff}
+        .premium-price-old{
+            font-size:18px;color:var(--text3);text-decoration:line-through;
+            text-decoration-color:var(--primary);
         }
-        .bouncing { animation: bounce 0.3s ease; }
-
-        /* Install prompt */
-        .install-prompt {
-            display: none;
-            position: fixed;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            background: #2a2a4e;
-            padding: 16px;
-            text-align: center;
-            z-index: 50;
-            border-top: 1px solid #3a3a5e;
+        .premium-per{font-size:12px;color:var(--text3);margin-bottom:20px}
+        .premium-features{list-style:none;padding:0;margin-bottom:24px}
+        .premium-features li{
+            padding:8px 0;font-size:13px;color:var(--text2);
+            display:flex;align-items:center;gap:10px;
+            border-bottom:1px solid var(--glass-border);
         }
-        .install-prompt button {
-            background: var(--primary);
-            color: white;
-            border: none;
-            padding: 10px 24px;
-            border-radius: 10px;
-            font-weight: 600;
-            margin: 0 4px;
-            cursor: pointer;
+        .premium-features li:last-child{border-bottom:none}
+        .premium-features li .check{
+            width:20px;height:20px;border-radius:50%;
+            background:linear-gradient(135deg,var(--accent),#04B890);
+            display:flex;align-items:center;justify-content:center;
+            font-size:11px;color:#fff;flex-shrink:0;
         }
-        .install-prompt .dismiss {
-            background: transparent;
-            color: #888;
+        .btn-buy{
+            display:block;width:100%;padding:16px;
+            border:none;border-radius:16px;font-size:16px;
+            font-weight:700;cursor:pointer;letter-spacing:0.3px;
+            transition:all 0.15s cubic-bezier(0.34,1.56,0.64,1);
+            margin-bottom:10px;font-family:inherit;
+            position:relative;overflow:hidden;
+        }
+        .btn-buy::after{
+            content:'';position:absolute;top:0;left:-100%;
+            width:100%;height:100%;
+            background:linear-gradient(90deg,transparent,rgba(255,255,255,0.15),transparent);
+            animation:shimmer 3s ease-in-out infinite;
+        }
+        .btn-buy:active{transform:scale(0.97)}
+        .btn-stripe{
+            background:linear-gradient(135deg,#FF6B35,#E04B1A);
+            color:#fff;
+            box-shadow:0 4px 20px rgba(255,107,53,0.3);
+        }
+        .btn-paypal{
+            background:linear-gradient(135deg,#0070BA,#003087);
+            color:#fff;
+            box-shadow:0 4px 20px rgba(0,112,186,0.2);
+        }
+        .btn-note{font-size:11px;color:var(--text3);text-align:center;margin-top:4px}
+        /* FOOTER */
+        .footer{
+            text-align:center;padding:32px 20px;
+            animation:slideUp 0.6s ease-out 0.7s both;
+        }
+        .footer-brand{font-size:13px;font-weight:600;color:var(--text3);margin-bottom:4px}
+        .footer a{color:var(--text2);text-decoration:none;transition:color 0.2s}
+        .footer a:hover{color:var(--primary)}
+        .footer-sub{font-size:11px;color:var(--text3);margin-top:8px}
+        .footer-platforms{
+            display:flex;flex-wrap:wrap;justify-content:center;gap:8px;margin-top:12px;
+        }
+        .footer-platforms span{
+            font-size:10px;font-weight:600;color:var(--text3);
+            background:var(--glass);border:1px solid var(--glass-border);
+            padding:4px 10px;border-radius:20px;letter-spacing:0.5px;
+        }
+        /* TOAST */
+        .toast{
+            position:fixed;top:calc(20px + env(safe-area-inset-top));left:50%;
+            transform:translateX(-50%) translateY(-120px);
+            background:var(--glass);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);
+            border:1px solid var(--glass-border);
+            color:var(--text);
+            padding:14px 28px;border-radius:var(--radius-xl);
+            font-weight:600;font-size:14px;
+            transition:transform 0.4s cubic-bezier(0.34,1.56,0.64,1);z-index:200;
+            box-shadow:0 10px 40px rgba(0,0,0,0.3);
+        }
+        .toast.show{transform:translateX(-50%) translateY(0)}
+        /* INSTALL PROMPT */
+        .install-prompt{
+            display:none;position:fixed;bottom:0;left:0;right:0;
+            background:var(--surface);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);
+            border-top:1px solid var(--glass-border);
+            padding:20px;text-align:center;z-index:150;
+            padding-bottom:calc(20px + env(safe-area-inset-bottom));
+        }
+        .install-prompt p{font-size:14px;font-weight:600;color:var(--text);margin-bottom:12px}
+        .install-prompt button{
+            background:linear-gradient(135deg,var(--primary),#E04B1A);
+            color:#fff;border:none;
+            padding:12px 28px;border-radius:14px;font-weight:700;
+            font-size:14px;font-family:inherit;cursor:pointer;
+            margin:0 4px;box-shadow:0 4px 16px var(--primary-glow);
+        }
+        .install-prompt .dismiss{
+            background:transparent;color:var(--text3);box-shadow:none;
+        }
+        /* COMBO POPUP */
+        .combo-popup{
+            position:fixed;top:50%;left:50%;
+            transform:translate(-50%,-50%) scale(0);
+            font-size:72px;font-weight:900;
+            background:linear-gradient(135deg,var(--primary),var(--secondary));
+            -webkit-background-clip:text;background-clip:text;
+            -webkit-text-fill-color:transparent;color:transparent;
+            pointer-events:none;z-index:100;
+            transition:transform 0.3s cubic-bezier(0.34,1.56,0.64,1),opacity 0.3s;
+            opacity:0;filter:drop-shadow(0 4px 20px var(--primary-glow));
+        }
+        .combo-popup.show{transform:translate(-50%,-50%) scale(1);opacity:1}
+        /* RESPONSIVE */
+        @media(max-width:360px){
+            .tap-zone{width:220px;height:220px}
+            .tap-zone .emoji{font-size:72px}
+            .logo{font-size:38px}
+            .packs-grid{gap:6px}
+            .pack-btn{padding:10px 4px 8px}
+        }
+        @media(min-width:768px){
+            .tap-zone{width:300px;height:300px}
+            .tap-zone .emoji{font-size:110px}
+        }
+        /* SCROLLBAR */
+        ::-webkit-scrollbar{width:4px}
+        ::-webkit-scrollbar-track{background:transparent}
+        ::-webkit-scrollbar-thumb{background:var(--surface3);border-radius:4px}
+        /* REDUCED MOTION */
+        @media(prefers-reduced-motion:reduce){
+            *,*::before,*::after{animation-duration:0.01ms!important;transition-duration:0.01ms!important}
         }
     </style>
 </head>
 <body>
-    <div class="header">
-        <div class="logo">TapToons</div>
-        <div class="tagline">Shake it. Tap it. Laugh!</div>
+    <!-- AMBIENT BACKGROUND -->
+    <div class="ambient" aria-hidden="true">
+        <div class="orb"></div><div class="orb"></div><div class="orb"></div>
     </div>
 
-    <div class="tap-zone" id="tapZone">
-        <span class="emoji" id="mainEmoji">🎪</span>
-    </div>
+    <div class="app">
+        <!-- HEADER -->
+        <header class="header">
+            <h1 class="logo">TapToons</h1>
+            <p class="tagline">Shake it. Tap it. <span>Laugh!</span></p>
+        </header>
 
-    <div class="shake-indicator" id="shakeIndicator">
-        📱 Shake your device or tap the circle!
-    </div>
-
-    <div class="volume-bars" id="volumeBars">
-        <div class="bar" style="height:5px"></div>
-        <div class="bar" style="height:5px"></div>
-        <div class="bar" style="height:5px"></div>
-        <div class="bar" style="height:5px"></div>
-        <div class="bar" style="height:5px"></div>
-        <div class="bar" style="height:5px"></div>
-        <div class="bar" style="height:5px"></div>
-        <div class="bar" style="height:5px"></div>
-    </div>
-
-    <div class="stats">
-        <div class="stat">
-            <div class="stat-num" id="tapCount">0</div>
-            <div class="stat-label">TAPS</div>
+        <!-- MAIN TAP ZONE -->
+        <div class="tap-zone-wrapper">
+            <div class="tap-zone" id="tapZone" role="button" aria-label="Tap to play sound" tabindex="0">
+                <span class="emoji" id="mainEmoji">🎪</span>
+                <div class="ring" id="ring1"></div>
+                <div class="ring" id="ring2"></div>
+            </div>
         </div>
-        <div class="stat">
-            <div class="stat-num" id="shakeCount">0</div>
-            <div class="stat-label">SHAKES</div>
+
+        <div class="shake-indicator" id="shakeIndicator">
+            Shake your device or tap the circle
         </div>
-        <div class="stat">
-            <div class="stat-num" id="comboCount">0</div>
-            <div class="stat-label">COMBO</div>
+
+        <!-- SOUND VISUALIZER -->
+        <div class="visualizer" id="visualizer" aria-hidden="true">
+            <div class="bar" style="height:3px"></div><div class="bar" style="height:3px"></div>
+            <div class="bar" style="height:3px"></div><div class="bar" style="height:3px"></div>
+            <div class="bar" style="height:3px"></div><div class="bar" style="height:3px"></div>
+            <div class="bar" style="height:3px"></div><div class="bar" style="height:3px"></div>
+            <div class="bar" style="height:3px"></div><div class="bar" style="height:3px"></div>
+            <div class="bar" style="height:3px"></div><div class="bar" style="height:3px"></div>
         </div>
+
+        <!-- STATS -->
+        <div class="stats-card">
+            <div class="stat">
+                <div class="stat-num" id="tapCount">0</div>
+                <div class="stat-label">Taps</div>
+            </div>
+            <div class="stat">
+                <div class="stat-num" id="shakeCount">0</div>
+                <div class="stat-label">Shakes</div>
+            </div>
+            <div class="stat">
+                <div class="stat-num" id="comboCount">0</div>
+                <div class="stat-label">Combo</div>
+            </div>
+        </div>
+
+        <!-- SOUND PACKS -->
+        <div class="section">
+            <div class="section-title">
+                Sound Packs <span class="badge">8 PACKS</span>
+            </div>
+            <div class="packs-grid" id="packsGrid"></div>
+        </div>
+
+        <!-- CONTROLS -->
+        <div class="controls">
+            <div class="control-row">
+                <label for="sensitivity">Sensitivity</label>
+                <input type="range" id="sensitivity" min="5" max="40" value="15" aria-label="Shake sensitivity">
+            </div>
+            <div class="control-row">
+                <label for="volume">Volume</label>
+                <input type="range" id="volume" min="1" max="100" value="80" aria-label="Volume level">
+            </div>
+        </div>
+
+        <!-- PREMIUM -->
+        <div class="premium-card" id="premiumBanner">
+            <span class="premium-label">Premium</span>
+            <h3>Unlock Everything</h3>
+            <p class="subtitle">All 8 sound packs, custom sounds, and lifetime updates.</p>
+            <div class="premium-price-row">
+                <span class="premium-price-now">$0.99</span>
+                <span class="premium-price-old">$4.99</span>
+            </div>
+            <p class="premium-per">One-time payment. Lifetime access.</p>
+            <ul class="premium-features">
+                <li><span class="check">&#10003;</span> 8 sound packs (130+ sounds)</li>
+                <li><span class="check">&#10003;</span> Custom sound recording</li>
+                <li><span class="check">&#10003;</span> No ads forever</li>
+                <li><span class="check">&#10003;</span> Combo multiplier effects</li>
+                <li><span class="check">&#10003;</span> Lifetime free updates</li>
+            </ul>
+            <button class="btn-buy btn-stripe" id="btnStripe" aria-label="Buy with credit card" onclick="buyStripe()">
+                Buy with Card — $0.99
+            </button>
+            <button class="btn-buy btn-paypal" id="btnPaypal" aria-label="Buy with PayPal" onclick="buyPaypal()">
+                Pay with PayPal — $0.99
+            </button>
+            <p class="btn-note">Secure payment. Instant access. No subscription.</p>
+        </div>
+
+        <!-- FOOTER -->
+        <footer class="footer">
+            <p class="footer-brand">TapToons v1.2 — by Padrao Bitcoin</p>
+            <p><a href="https://standardbitcoin.io">standardbitcoin.io</a></p>
+            <div class="footer-platforms">
+                <span>Android</span><span>iOS</span><span>macOS</span>
+                <span>Windows</span><span>Linux</span><span>HarmonyOS</span>
+            </div>
+            <p class="footer-sub">Family-friendly fun for all ages</p>
+        </footer>
     </div>
 
-    <div class="packs-section">
-        <div class="packs-title">🎵 Sound Packs</div>
-        <div class="packs-grid" id="packsGrid"></div>
-    </div>
-
-    <div class="controls">
-        <div class="control-row">
-            <span class="control-label">Sensitivity</span>
-            <input type="range" id="sensitivity" min="5" max="40" value="15">
-        </div>
-        <div class="control-row">
-            <span class="control-label">Volume</span>
-            <input type="range" id="volume" min="0" max="100" value="80">
-        </div>
-    </div>
-
-    <div class="premium-banner" id="premiumBanner">
-        <h3>TapToons Premium</h3>
-        <p>Unlock ALL 8 sound packs + custom sounds!</p>
-        <div class="premium-price">
-            $0.99 <span class="original">$2.99</span>
-        </div>
-        <ul class="premium-features">
-            <li>8 sound packs (130+ sounds)</li>
-            <li>Custom sound recording</li>
-            <li>No ads forever</li>
-            <li>Combo multiplier effects</li>
-            <li>Lifetime updates</li>
-        </ul>
-        <button class="btn-buy btn-stripe" id="btnStripe" onclick="buyStripe()">
-            💳 Buy with Card — $0.99
-        </button>
-        <button class="btn-buy btn-paypal" id="btnPaypal" onclick="buyPaypal()">
-            🅿️ Pay with PayPal — $0.99
-        </button>
-        <div class="btn-buy-small">One-time payment. No subscription. Lifetime access.</div>
-    </div>
-
-    <div class="footer">
-        <p>TapToons v1.0 — by Padrao Bitcoin</p>
-        <p><a href="https://standardbitcoin.io">standardbitcoin.io</a> | Family-friendly fun for all ages</p>
-        <p style="margin-top:8px">Works on Android, iOS, macOS, Windows, Linux</p>
-    </div>
-
+    <!-- OVERLAYS -->
     <div class="toast" id="toast"></div>
-
+    <div class="combo-popup" id="comboPopup"></div>
     <div class="install-prompt" id="installPrompt">
-        <p style="margin-bottom:10px; font-size:14px">📲 Install TapToons for the best experience!</p>
-        <button onclick="installApp()">Install</button>
+        <p>Install TapToons for the best experience</p>
+        <button onclick="installApp()">Install Now</button>
         <button class="dismiss" onclick="dismissInstall()">Later</button>
     </div>
 
     <script>
-    // ====================================================
-    // TapToons — Funny Sound Effects App
-    // Cross-platform PWA with motion detection
-    // By Padrao Bitcoin — standardbitcoin.io
-    // ====================================================
+    // TapToons v1.2 — Premium UX Edition
+    // Cross-platform PWA | By Padrao Bitcoin
 
     const AudioCtx = window.AudioContext || window.webkitAudioContext;
     let audioCtx = null;
     let isPremium = localStorage.getItem('taptoons_premium') === 'true';
 
-    // Stats
-    let stats = JSON.parse(localStorage.getItem('taptoons_stats') || '{"taps":0,"shakes":0,"combo":0,"maxCombo":0}');
-    let currentCombo = 0;
-    let comboTimer = null;
-    let lastTrigger = 0;
-    const COOLDOWN = 120; // ms between sounds
+    let stats;
+    try { stats = JSON.parse(localStorage.getItem('taptoons_stats')) || {taps:0,shakes:0,maxCombo:0}; }
+    catch(e) { stats = {taps:0,shakes:0,maxCombo:0}; }
 
-    // Sound Packs
+    let currentCombo = 0, comboTimer = null, lastTrigger = 0;
+    const COOLDOWN = 100;
+    const noiseCache = {};
+
     const PACKS = [
-        {
-            id: 'cartoon', name: 'Cartoon', emoji: '🎪', free: true,
-            sounds: [
-                {type:'boing', freq:300, dur:0.3},
-                {type:'pop', freq:800, dur:0.1},
-                {type:'slide', freq:600, dur:0.4},
-                {type:'bonk', freq:200, dur:0.2},
-                {type:'spring', freq:400, dur:0.5},
-            ]
-        },
-        {
-            id: 'animals', name: 'Animals', emoji: '🐔', free: true,
-            sounds: [
-                {type:'quack', freq:350, dur:0.25},
-                {type:'meow', freq:500, dur:0.4},
-                {type:'moo', freq:120, dur:0.6},
-                {type:'bark', freq:250, dur:0.15},
-                {type:'oink', freq:220, dur:0.3},
-            ]
-        },
-        {
-            id: 'music', name: 'Music', emoji: '🥁', free: true,
-            sounds: [
-                {type:'drum', freq:100, dur:0.2},
-                {type:'cymbal', freq:2000, dur:0.5},
-                {type:'gong', freq:80, dur:0.8},
-                {type:'bell', freq:1200, dur:0.4},
-                {type:'xylophone', freq:700, dur:0.3},
-            ]
-        },
-        {
-            id: 'voices', name: 'Voices', emoji: '😂', free: false,
-            sounds: [
-                {type:'oi', freq:400, dur:0.2},
-                {type:'ouch', freq:350, dur:0.25},
-                {type:'haha', freq:450, dur:0.4},
-                {type:'wow', freq:300, dur:0.35},
-                {type:'uh', freq:180, dur:0.3},
-            ]
-        },
-        {
-            id: 'retro', name: 'Retro', emoji: '🕹️', free: false,
-            sounds: [
-                {type:'coin', freq:988, dur:0.15},
-                {type:'powerup', freq:400, dur:0.5},
-                {type:'gameover', freq:200, dur:0.6},
-                {type:'jump', freq:500, dur:0.2},
-                {type:'laser', freq:1500, dur:0.15},
-            ]
-        },
-        {
-            id: 'nature', name: 'Nature', emoji: '⚡', free: false,
-            sounds: [
-                {type:'thunder', freq:60, dur:0.8},
-                {type:'splash', freq:300, dur:0.4},
-                {type:'wind', freq:400, dur:0.6},
-                {type:'pop2', freq:1000, dur:0.08},
-                {type:'drip', freq:600, dur:0.2},
-            ]
-        },
-        {
-            id: 'silly', name: 'Silly', emoji: '💨', free: false,
-            sounds: [
-                {type:'fart1', freq:80, dur:0.4},
-                {type:'fart2', freq:100, dur:0.3},
-                {type:'burp', freq:70, dur:0.5},
-                {type:'squeak', freq:1800, dur:0.15},
-                {type:'honk', freq:250, dur:0.3},
-            ]
-        },
-        {
-            id: 'memes', name: 'Memes', emoji: '🔊', free: false,
-            sounds: [
-                {type:'boom', freq:40, dur:0.6},
-                {type:'bruh', freq:150, dur:0.3},
-                {type:'ding', freq:1400, dur:0.2},
-                {type:'trombone', freq:180, dur:0.8},
-                {type:'airhorn', freq:600, dur:0.5},
-            ]
-        },
+        { id:'cartoon', name:'Cartoon', emoji:'🎪', free:true, sounds:[
+            {type:'boing',freq:300,dur:0.3},{type:'pop',freq:800,dur:0.1},
+            {type:'slide',freq:600,dur:0.4},{type:'bonk',freq:200,dur:0.2},
+            {type:'spring',freq:400,dur:0.5}
+        ]},
+        { id:'animals', name:'Animals', emoji:'🐔', free:true, sounds:[
+            {type:'quack',freq:350,dur:0.25},{type:'meow',freq:500,dur:0.4},
+            {type:'moo',freq:120,dur:0.6},{type:'bark',freq:250,dur:0.15},
+            {type:'oink',freq:220,dur:0.3}
+        ]},
+        { id:'music', name:'Music', emoji:'🥁', free:true, sounds:[
+            {type:'drum',freq:100,dur:0.2},{type:'cymbal',freq:2000,dur:0.5},
+            {type:'gong',freq:80,dur:0.8},{type:'bell',freq:1200,dur:0.4},
+            {type:'xylophone',freq:700,dur:0.3}
+        ]},
+        { id:'voices', name:'Voices', emoji:'😂', free:false, sounds:[
+            {type:'oi',freq:400,dur:0.2},{type:'ouch',freq:350,dur:0.25},
+            {type:'haha',freq:450,dur:0.4},{type:'wow',freq:300,dur:0.35},
+            {type:'uh',freq:180,dur:0.3}
+        ]},
+        { id:'retro', name:'Retro', emoji:'🕹️', free:false, sounds:[
+            {type:'coin',freq:988,dur:0.15},{type:'powerup',freq:400,dur:0.5},
+            {type:'gameover',freq:200,dur:0.6},{type:'jump',freq:500,dur:0.2},
+            {type:'laser',freq:1500,dur:0.15}
+        ]},
+        { id:'nature', name:'Nature', emoji:'⚡', free:false, sounds:[
+            {type:'thunder',freq:60,dur:0.8},{type:'splash',freq:300,dur:0.4},
+            {type:'wind',freq:400,dur:0.6},{type:'pop2',freq:1000,dur:0.08},
+            {type:'drip',freq:600,dur:0.2}
+        ]},
+        { id:'silly', name:'Silly', emoji:'💨', free:false, sounds:[
+            {type:'fart1',freq:80,dur:0.4},{type:'fart2',freq:100,dur:0.3},
+            {type:'burp',freq:70,dur:0.5},{type:'squeak',freq:1800,dur:0.15},
+            {type:'honk',freq:250,dur:0.3}
+        ]},
+        { id:'memes', name:'Memes', emoji:'🔊', free:false, sounds:[
+            {type:'boom',freq:40,dur:0.6},{type:'bruh',freq:150,dur:0.3},
+            {type:'ding',freq:1400,dur:0.2},{type:'trombone',freq:180,dur:0.8},
+            {type:'airhorn',freq:600,dur:0.5}
+        ]},
     ];
-
     let currentPack = 0;
 
-    // ============ AUDIO SYNTHESIS ============
+    // AMBIENT STARS
+    (function initStars(){
+        const amb = document.querySelector('.ambient');
+        for(let i=0;i<20;i++){
+            const s = document.createElement('div');
+            s.className='star';
+            s.style.left=Math.random()*100+'%';
+            s.style.top=Math.random()*100+'%';
+            s.style.animationDelay=(-Math.random()*3)+'s';
+            s.style.animationDuration=(2+Math.random()*3)+'s';
+            amb.appendChild(s);
+        }
+    })();
 
-    function initAudio() {
-        if (!audioCtx) audioCtx = new AudioCtx();
-        if (audioCtx.state === 'suspended') audioCtx.resume();
+    function initAudio(){
+        if(!audioCtx) audioCtx=new AudioCtx();
+        if(audioCtx.state==='suspended') audioCtx.resume();
     }
 
-    function playSound(soundDef) {
+    function playSound(sd){
         initAudio();
-        const now = audioCtx.currentTime;
-        const vol = document.getElementById('volume').value / 100;
-
-        const master = audioCtx.createGain();
-        master.gain.setValueAtTime(vol * 0.7, now);
-        master.gain.exponentialRampToValueAtTime(0.001, now + soundDef.dur + 0.1);
+        const t=audioCtx.currentTime;
+        const vol=Math.max(document.getElementById('volume').value/100,0.01);
+        const master=audioCtx.createGain();
+        master.gain.setValueAtTime(vol*0.7,t);
+        master.gain.exponentialRampToValueAtTime(0.001,t+sd.dur+0.1);
         master.connect(audioCtx.destination);
+        setTimeout(()=>{try{master.disconnect()}catch(e){}}, (sd.dur+0.3)*1000);
+        const S={
+            boing:synthBoing,pop:synthPop,pop2:synthPop,slide:synthSlide,
+            bonk:synthBonk,spring:synthSpring,quack:synthAnimal,meow:synthAnimal,
+            oink:synthAnimal,moo:synthMoo,bark:synthBark,drum:synthDrum,
+            cymbal:synthCymbal,gong:synthGong,bell:synthBell,xylophone:synthBell,
+            ding:synthBell,coin:synthCoin,powerup:synthPowerup,gameover:synthGameover,
+            jump:synthJump,laser:synthLaser,fart1:synthFart,fart2:synthFart,
+            burp:synthFart,squeak:synthSqueak,honk:synthHonk,airhorn:synthHonk,
+            boom:synthBoom,trombone:synthTrombone,thunder:synthThunder,
+            splash:synthSplash,drip:synthSplash,wind:synthSplash,
+            oi:synthAnimal,ouch:synthAnimal,haha:synthSpring,wow:synthSlide,uh:synthMoo,bruh:synthBonk,
+        };
+        (S[sd.type]||synthDefault)(t,sd,master);
+    }
 
-        switch(soundDef.type) {
-            case 'boing':
-                synthBoing(now, soundDef, master);
-                break;
-            case 'pop': case 'pop2':
-                synthPop(now, soundDef, master);
-                break;
-            case 'slide':
-                synthSlide(now, soundDef, master);
-                break;
-            case 'bonk':
-                synthBonk(now, soundDef, master);
-                break;
-            case 'spring':
-                synthSpring(now, soundDef, master);
-                break;
-            case 'quack': case 'meow': case 'oink':
-                synthAnimal(now, soundDef, master);
-                break;
-            case 'moo':
-                synthMoo(now, soundDef, master);
-                break;
-            case 'bark':
-                synthBark(now, soundDef, master);
-                break;
-            case 'drum':
-                synthDrum(now, soundDef, master);
-                break;
-            case 'cymbal':
-                synthCymbal(now, soundDef, master);
-                break;
-            case 'gong':
-                synthGong(now, soundDef, master);
-                break;
-            case 'bell': case 'xylophone': case 'ding':
-                synthBell(now, soundDef, master);
-                break;
-            case 'coin':
-                synthCoin(now, soundDef, master);
-                break;
-            case 'powerup':
-                synthPowerup(now, soundDef, master);
-                break;
-            case 'gameover':
-                synthGameover(now, soundDef, master);
-                break;
-            case 'jump':
-                synthJump(now, soundDef, master);
-                break;
-            case 'laser':
-                synthLaser(now, soundDef, master);
-                break;
-            case 'fart1': case 'fart2': case 'burp':
-                synthFart(now, soundDef, master);
-                break;
-            case 'squeak':
-                synthSqueak(now, soundDef, master);
-                break;
-            case 'honk': case 'airhorn':
-                synthHonk(now, soundDef, master);
-                break;
-            case 'boom':
-                synthBoom(now, soundDef, master);
-                break;
-            case 'trombone':
-                synthTrombone(now, soundDef, master);
-                break;
-            case 'thunder':
-                synthThunder(now, soundDef, master);
-                break;
-            case 'splash': case 'drip':
-                synthSplash(now, soundDef, master);
-                break;
-            default:
-                synthDefault(now, soundDef, master);
+    function synthBoing(t,s,o){const c=audioCtx.createOscillator();c.type='sine';c.frequency.setValueAtTime(s.freq,t);c.frequency.exponentialRampToValueAtTime(s.freq*3,t+0.05);c.frequency.exponentialRampToValueAtTime(Math.max(s.freq*0.5,20),t+s.dur);c.connect(o);c.start(t);c.stop(t+s.dur);}
+    function synthPop(t,s,o){const c=audioCtx.createOscillator();c.type='sine';c.frequency.setValueAtTime(s.freq,t);c.frequency.exponentialRampToValueAtTime(100,t+s.dur);c.connect(o);c.start(t);c.stop(t+s.dur);}
+    function synthSlide(t,s,o){const c=audioCtx.createOscillator();c.type='sawtooth';c.frequency.setValueAtTime(s.freq*2,t);c.frequency.exponentialRampToValueAtTime(Math.max(s.freq*0.2,20),t+s.dur);c.connect(o);c.start(t);c.stop(t+s.dur);}
+    function synthBonk(t,s,o){const c=audioCtx.createOscillator();c.type='triangle';c.frequency.setValueAtTime(s.freq*2,t);c.frequency.exponentialRampToValueAtTime(Math.max(s.freq*0.3,20),t+0.05);createNoise(t,0.05,o,0.3);c.connect(o);c.start(t);c.stop(t+s.dur);}
+    function synthSpring(t,s,o){const c=audioCtx.createOscillator();c.type='sine';for(let i=0;i<8;i++){c.frequency.setValueAtTime(s.freq*(1+i*0.5),t+i*0.06);c.frequency.setValueAtTime(s.freq*(0.5+i*0.3),t+i*0.06+0.03);}c.connect(o);c.start(t);c.stop(t+s.dur);}
+    function synthAnimal(t,s,o){const c=audioCtx.createOscillator();c.type='sawtooth';const l=audioCtx.createOscillator();const g=audioCtx.createGain();l.frequency.value=8;g.gain.value=s.freq*0.3;l.connect(g);g.connect(c.frequency);c.frequency.setValueAtTime(s.freq,t);c.connect(o);l.start(t);c.start(t);l.stop(t+s.dur);c.stop(t+s.dur);}
+    function synthMoo(t,s,o){const c=audioCtx.createOscillator();c.type='sawtooth';c.frequency.setValueAtTime(s.freq,t);c.frequency.linearRampToValueAtTime(s.freq*1.2,t+0.2);c.frequency.linearRampToValueAtTime(s.freq*0.9,t+s.dur);const f=audioCtx.createBiquadFilter();f.type='lowpass';f.frequency.value=400;c.connect(f);f.connect(o);c.start(t);c.stop(t+s.dur);}
+    function synthBark(t,s,o){const c=audioCtx.createOscillator();c.type='square';c.frequency.setValueAtTime(s.freq*2,t);c.frequency.exponentialRampToValueAtTime(s.freq,t+0.05);createNoise(t,0.05,o,0.2);c.connect(o);c.start(t);c.stop(t+s.dur);}
+    function synthDrum(t,s,o){const c=audioCtx.createOscillator();c.type='sine';c.frequency.setValueAtTime(s.freq*3,t);c.frequency.exponentialRampToValueAtTime(Math.max(s.freq*0.5,20),t+s.dur);createNoise(t,0.03,o,0.5);c.connect(o);c.start(t);c.stop(t+s.dur);}
+    function synthCymbal(t,s,o){createNoise(t,s.dur,o,0.4);const c=audioCtx.createOscillator();c.type='square';c.frequency.value=s.freq;const g=audioCtx.createGain();g.gain.setValueAtTime(0.1,t);g.gain.exponentialRampToValueAtTime(0.001,t+s.dur);c.connect(g);g.connect(o);c.start(t);c.stop(t+s.dur);}
+    function synthGong(t,s,o){[s.freq,s.freq*1.5,s.freq*2.3].forEach(f=>{const c=audioCtx.createOscillator();c.type='sine';c.frequency.value=f;const g=audioCtx.createGain();g.gain.setValueAtTime(0.2,t);g.gain.exponentialRampToValueAtTime(0.001,t+s.dur);c.connect(g);g.connect(o);c.start(t);c.stop(t+s.dur);});}
+    function synthBell(t,s,o){[1,2.4,3.8,5.1].forEach((r,i)=>{const c=audioCtx.createOscillator();c.type='sine';c.frequency.value=s.freq*r;const g=audioCtx.createGain();g.gain.setValueAtTime(0.15/(i+1),t);g.gain.exponentialRampToValueAtTime(0.001,t+s.dur);c.connect(g);g.connect(o);c.start(t);c.stop(t+s.dur);});}
+    function synthCoin(t,s,o){const c=audioCtx.createOscillator();c.type='square';c.frequency.setValueAtTime(s.freq,t);c.frequency.setValueAtTime(s.freq*1.5,t+0.07);c.connect(o);c.start(t);c.stop(t+s.dur);}
+    function synthPowerup(t,s,o){const c=audioCtx.createOscillator();c.type='square';c.frequency.setValueAtTime(s.freq,t);c.frequency.exponentialRampToValueAtTime(s.freq*4,t+s.dur);c.connect(o);c.start(t);c.stop(t+s.dur);}
+    function synthGameover(t,s,o){const c=audioCtx.createOscillator();c.type='square';c.frequency.setValueAtTime(s.freq*2,t);c.frequency.linearRampToValueAtTime(s.freq*0.3,t+s.dur);c.connect(o);c.start(t);c.stop(t+s.dur);}
+    function synthJump(t,s,o){const c=audioCtx.createOscillator();c.type='square';c.frequency.setValueAtTime(s.freq*0.5,t);c.frequency.exponentialRampToValueAtTime(s.freq*2,t+s.dur*0.7);c.frequency.exponentialRampToValueAtTime(s.freq,t+s.dur);c.connect(o);c.start(t);c.stop(t+s.dur);}
+    function synthLaser(t,s,o){const c=audioCtx.createOscillator();c.type='sawtooth';c.frequency.setValueAtTime(s.freq,t);c.frequency.exponentialRampToValueAtTime(100,t+s.dur);c.connect(o);c.start(t);c.stop(t+s.dur);}
+    function synthFart(t,s,o){createNoise(t,s.dur,o,0.3);const c=audioCtx.createOscillator();c.type='sawtooth';c.frequency.setValueAtTime(s.freq,t);c.frequency.linearRampToValueAtTime(s.freq*0.5,t+s.dur);const f=audioCtx.createBiquadFilter();f.type='lowpass';f.frequency.setValueAtTime(300,t);f.frequency.linearRampToValueAtTime(100,t+s.dur);c.connect(f);f.connect(o);c.start(t);c.stop(t+s.dur);}
+    function synthSqueak(t,s,o){const c=audioCtx.createOscillator();c.type='sine';c.frequency.setValueAtTime(s.freq,t);c.frequency.exponentialRampToValueAtTime(s.freq*1.5,t+0.05);c.frequency.exponentialRampToValueAtTime(s.freq*0.8,t+s.dur);c.connect(o);c.start(t);c.stop(t+s.dur);}
+    function synthHonk(t,s,o){const c=audioCtx.createOscillator();c.type='sawtooth';c.frequency.value=s.freq;const l=audioCtx.createOscillator();const g=audioCtx.createGain();l.frequency.value=5;g.gain.value=30;l.connect(g);g.connect(c.frequency);c.connect(o);l.start(t);c.start(t);l.stop(t+s.dur);c.stop(t+s.dur);}
+    function synthBoom(t,s,o){const c=audioCtx.createOscillator();c.type='sine';c.frequency.setValueAtTime(s.freq*5,t);c.frequency.exponentialRampToValueAtTime(s.freq,t+0.1);c.frequency.exponentialRampToValueAtTime(20,t+s.dur);createNoise(t,0.1,o,0.5);c.connect(o);c.start(t);c.stop(t+s.dur);}
+    function synthTrombone(t,s,o){const c=audioCtx.createOscillator();c.type='sawtooth';[s.freq,s.freq*0.9,s.freq*0.75,s.freq*0.5].forEach((f,i)=>{c.frequency.setValueAtTime(f,t+i*0.2);});const fl=audioCtx.createBiquadFilter();fl.type='lowpass';fl.frequency.value=600;c.connect(fl);fl.connect(o);c.start(t);c.stop(t+s.dur);}
+    function synthThunder(t,s,o){createNoise(t,s.dur,o,0.5);const c=audioCtx.createOscillator();c.type='sine';c.frequency.setValueAtTime(s.freq*2,t);c.frequency.exponentialRampToValueAtTime(Math.max(s.freq*0.3,20),t+s.dur);c.connect(o);c.start(t);c.stop(t+s.dur);}
+    function synthSplash(t,s,o){createNoise(t,s.dur,o,0.3);const c=audioCtx.createOscillator();c.type='sine';c.frequency.setValueAtTime(s.freq*3,t);c.frequency.exponentialRampToValueAtTime(Math.max(s.freq*0.2,20),t+s.dur);const g=audioCtx.createGain();g.gain.setValueAtTime(0.2,t);g.gain.exponentialRampToValueAtTime(0.001,t+s.dur);c.connect(g);g.connect(o);c.start(t);c.stop(t+s.dur);}
+    function synthDefault(t,s,o){const c=audioCtx.createOscillator();c.type='sine';c.frequency.value=s.freq;c.connect(o);c.start(t);c.stop(t+s.dur);}
+
+    function createNoise(t,dur,out,vol){
+        const key=Math.round(dur*1000);
+        if(!noiseCache[key]){
+            const buf=audioCtx.createBuffer(1,audioCtx.sampleRate*dur,audioCtx.sampleRate);
+            const data=buf.getChannelData(0);
+            for(let i=0;i<data.length;i++) data[i]=Math.random()*2-1;
+            noiseCache[key]=buf;
         }
+        const src=audioCtx.createBufferSource();
+        src.buffer=noiseCache[key];
+        const g=audioCtx.createGain();
+        g.gain.setValueAtTime(Math.max(vol,0.001),t);
+        g.gain.exponentialRampToValueAtTime(0.001,t+dur);
+        src.connect(g);g.connect(out);
+        src.start(t);src.stop(t+dur);
     }
 
-    // Synth functions
-    function synthBoing(t, s, out) {
-        const osc = audioCtx.createOscillator();
-        osc.type = 'sine';
-        osc.frequency.setValueAtTime(s.freq, t);
-        osc.frequency.exponentialRampToValueAtTime(s.freq * 3, t + 0.05);
-        osc.frequency.exponentialRampToValueAtTime(s.freq * 0.5, t + s.dur);
-        osc.connect(out);
-        osc.start(t); osc.stop(t + s.dur);
-    }
-    function synthPop(t, s, out) {
-        const osc = audioCtx.createOscillator();
-        osc.type = 'sine';
-        osc.frequency.setValueAtTime(s.freq, t);
-        osc.frequency.exponentialRampToValueAtTime(100, t + s.dur);
-        osc.connect(out);
-        osc.start(t); osc.stop(t + s.dur);
-    }
-    function synthSlide(t, s, out) {
-        const osc = audioCtx.createOscillator();
-        osc.type = 'sawtooth';
-        osc.frequency.setValueAtTime(s.freq * 2, t);
-        osc.frequency.exponentialRampToValueAtTime(s.freq * 0.2, t + s.dur);
-        osc.connect(out);
-        osc.start(t); osc.stop(t + s.dur);
-    }
-    function synthBonk(t, s, out) {
-        const osc = audioCtx.createOscillator();
-        osc.type = 'triangle';
-        osc.frequency.setValueAtTime(s.freq * 2, t);
-        osc.frequency.exponentialRampToValueAtTime(s.freq * 0.3, t + 0.05);
-        const noise = createNoise(t, 0.05, out, 0.3);
-        osc.connect(out);
-        osc.start(t); osc.stop(t + s.dur);
-    }
-    function synthSpring(t, s, out) {
-        const osc = audioCtx.createOscillator();
-        osc.type = 'sine';
-        for (let i = 0; i < 8; i++) {
-            osc.frequency.setValueAtTime(s.freq * (1 + i * 0.5), t + i * 0.06);
-            osc.frequency.setValueAtTime(s.freq * (0.5 + i * 0.3), t + i * 0.06 + 0.03);
-        }
-        osc.connect(out);
-        osc.start(t); osc.stop(t + s.dur);
-    }
-    function synthAnimal(t, s, out) {
-        const osc = audioCtx.createOscillator();
-        osc.type = 'sawtooth';
-        const lfo = audioCtx.createOscillator();
-        const lfoGain = audioCtx.createGain();
-        lfo.frequency.value = 8;
-        lfoGain.gain.value = s.freq * 0.3;
-        lfo.connect(lfoGain);
-        lfoGain.connect(osc.frequency);
-        osc.frequency.setValueAtTime(s.freq, t);
-        osc.connect(out);
-        lfo.start(t); osc.start(t);
-        lfo.stop(t + s.dur); osc.stop(t + s.dur);
-    }
-    function synthMoo(t, s, out) {
-        const osc = audioCtx.createOscillator();
-        osc.type = 'sawtooth';
-        osc.frequency.setValueAtTime(s.freq, t);
-        osc.frequency.linearRampToValueAtTime(s.freq * 1.2, t + 0.2);
-        osc.frequency.linearRampToValueAtTime(s.freq * 0.9, t + s.dur);
-        const filter = audioCtx.createBiquadFilter();
-        filter.type = 'lowpass';
-        filter.frequency.value = 400;
-        osc.connect(filter);
-        filter.connect(out);
-        osc.start(t); osc.stop(t + s.dur);
-    }
-    function synthBark(t, s, out) {
-        const osc = audioCtx.createOscillator();
-        osc.type = 'square';
-        osc.frequency.setValueAtTime(s.freq * 2, t);
-        osc.frequency.exponentialRampToValueAtTime(s.freq, t + 0.05);
-        createNoise(t, 0.05, out, 0.2);
-        osc.connect(out);
-        osc.start(t); osc.stop(t + s.dur);
-    }
-    function synthDrum(t, s, out) {
-        const osc = audioCtx.createOscillator();
-        osc.type = 'sine';
-        osc.frequency.setValueAtTime(s.freq * 3, t);
-        osc.frequency.exponentialRampToValueAtTime(s.freq * 0.5, t + s.dur);
-        createNoise(t, 0.03, out, 0.5);
-        osc.connect(out);
-        osc.start(t); osc.stop(t + s.dur);
-    }
-    function synthCymbal(t, s, out) {
-        createNoise(t, s.dur, out, 0.4);
-        const osc = audioCtx.createOscillator();
-        osc.type = 'square';
-        osc.frequency.value = s.freq;
-        const g = audioCtx.createGain();
-        g.gain.setValueAtTime(0.1, t);
-        g.gain.exponentialRampToValueAtTime(0.001, t + s.dur);
-        osc.connect(g); g.connect(out);
-        osc.start(t); osc.stop(t + s.dur);
-    }
-    function synthGong(t, s, out) {
-        [s.freq, s.freq*1.5, s.freq*2.3].forEach(f => {
-            const osc = audioCtx.createOscillator();
-            osc.type = 'sine';
-            osc.frequency.value = f;
-            const g = audioCtx.createGain();
-            g.gain.setValueAtTime(0.2, t);
-            g.gain.exponentialRampToValueAtTime(0.001, t + s.dur);
-            osc.connect(g); g.connect(out);
-            osc.start(t); osc.stop(t + s.dur);
-        });
-    }
-    function synthBell(t, s, out) {
-        [1, 2.4, 3.8, 5.1].forEach((r, i) => {
-            const osc = audioCtx.createOscillator();
-            osc.type = 'sine';
-            osc.frequency.value = s.freq * r;
-            const g = audioCtx.createGain();
-            g.gain.setValueAtTime(0.15 / (i+1), t);
-            g.gain.exponentialRampToValueAtTime(0.001, t + s.dur);
-            osc.connect(g); g.connect(out);
-            osc.start(t); osc.stop(t + s.dur);
-        });
-    }
-    function synthCoin(t, s, out) {
-        const osc = audioCtx.createOscillator();
-        osc.type = 'square';
-        osc.frequency.setValueAtTime(s.freq, t);
-        osc.frequency.setValueAtTime(s.freq * 1.5, t + 0.07);
-        osc.connect(out);
-        osc.start(t); osc.stop(t + s.dur);
-    }
-    function synthPowerup(t, s, out) {
-        const osc = audioCtx.createOscillator();
-        osc.type = 'square';
-        osc.frequency.setValueAtTime(s.freq, t);
-        osc.frequency.exponentialRampToValueAtTime(s.freq * 4, t + s.dur);
-        osc.connect(out);
-        osc.start(t); osc.stop(t + s.dur);
-    }
-    function synthGameover(t, s, out) {
-        const osc = audioCtx.createOscillator();
-        osc.type = 'square';
-        osc.frequency.setValueAtTime(s.freq * 2, t);
-        osc.frequency.linearRampToValueAtTime(s.freq * 0.3, t + s.dur);
-        osc.connect(out);
-        osc.start(t); osc.stop(t + s.dur);
-    }
-    function synthJump(t, s, out) {
-        const osc = audioCtx.createOscillator();
-        osc.type = 'square';
-        osc.frequency.setValueAtTime(s.freq * 0.5, t);
-        osc.frequency.exponentialRampToValueAtTime(s.freq * 2, t + s.dur * 0.7);
-        osc.frequency.exponentialRampToValueAtTime(s.freq, t + s.dur);
-        osc.connect(out);
-        osc.start(t); osc.stop(t + s.dur);
-    }
-    function synthLaser(t, s, out) {
-        const osc = audioCtx.createOscillator();
-        osc.type = 'sawtooth';
-        osc.frequency.setValueAtTime(s.freq, t);
-        osc.frequency.exponentialRampToValueAtTime(100, t + s.dur);
-        osc.connect(out);
-        osc.start(t); osc.stop(t + s.dur);
-    }
-    function synthFart(t, s, out) {
-        createNoise(t, s.dur, out, 0.3);
-        const osc = audioCtx.createOscillator();
-        osc.type = 'sawtooth';
-        osc.frequency.setValueAtTime(s.freq, t);
-        osc.frequency.linearRampToValueAtTime(s.freq * 0.5, t + s.dur);
-        const filter = audioCtx.createBiquadFilter();
-        filter.type = 'lowpass';
-        filter.frequency.setValueAtTime(300, t);
-        filter.frequency.linearRampToValueAtTime(100, t + s.dur);
-        osc.connect(filter);
-        filter.connect(out);
-        osc.start(t); osc.stop(t + s.dur);
-    }
-    function synthSqueak(t, s, out) {
-        const osc = audioCtx.createOscillator();
-        osc.type = 'sine';
-        osc.frequency.setValueAtTime(s.freq, t);
-        osc.frequency.exponentialRampToValueAtTime(s.freq * 1.5, t + 0.05);
-        osc.frequency.exponentialRampToValueAtTime(s.freq * 0.8, t + s.dur);
-        osc.connect(out);
-        osc.start(t); osc.stop(t + s.dur);
-    }
-    function synthHonk(t, s, out) {
-        const osc = audioCtx.createOscillator();
-        osc.type = 'sawtooth';
-        osc.frequency.value = s.freq;
-        const lfo = audioCtx.createOscillator();
-        const lfoG = audioCtx.createGain();
-        lfo.frequency.value = 5;
-        lfoG.gain.value = 30;
-        lfo.connect(lfoG);
-        lfoG.connect(osc.frequency);
-        osc.connect(out);
-        lfo.start(t); osc.start(t);
-        lfo.stop(t + s.dur); osc.stop(t + s.dur);
-    }
-    function synthBoom(t, s, out) {
-        const osc = audioCtx.createOscillator();
-        osc.type = 'sine';
-        osc.frequency.setValueAtTime(s.freq * 5, t);
-        osc.frequency.exponentialRampToValueAtTime(s.freq, t + 0.1);
-        osc.frequency.exponentialRampToValueAtTime(20, t + s.dur);
-        createNoise(t, 0.1, out, 0.5);
-        osc.connect(out);
-        osc.start(t); osc.stop(t + s.dur);
-    }
-    function synthTrombone(t, s, out) {
-        const osc = audioCtx.createOscillator();
-        osc.type = 'sawtooth';
-        [s.freq, s.freq * 0.9, s.freq * 0.75, s.freq * 0.5].forEach((f, i) => {
-            osc.frequency.setValueAtTime(f, t + i * 0.2);
-        });
-        const filter = audioCtx.createBiquadFilter();
-        filter.type = 'lowpass';
-        filter.frequency.value = 600;
-        osc.connect(filter);
-        filter.connect(out);
-        osc.start(t); osc.stop(t + s.dur);
-    }
-    function synthThunder(t, s, out) {
-        createNoise(t, s.dur, out, 0.5);
-        const osc = audioCtx.createOscillator();
-        osc.type = 'sine';
-        osc.frequency.setValueAtTime(s.freq * 2, t);
-        osc.frequency.exponentialRampToValueAtTime(s.freq * 0.3, t + s.dur);
-        osc.connect(out);
-        osc.start(t); osc.stop(t + s.dur);
-    }
-    function synthSplash(t, s, out) {
-        createNoise(t, s.dur, out, 0.3);
-        const osc = audioCtx.createOscillator();
-        osc.type = 'sine';
-        osc.frequency.setValueAtTime(s.freq * 3, t);
-        osc.frequency.exponentialRampToValueAtTime(s.freq * 0.2, t + s.dur);
-        const g = audioCtx.createGain();
-        g.gain.setValueAtTime(0.2, t);
-        g.gain.exponentialRampToValueAtTime(0.001, t + s.dur);
-        osc.connect(g); g.connect(out);
-        osc.start(t); osc.stop(t + s.dur);
-    }
-    function synthDefault(t, s, out) {
-        const osc = audioCtx.createOscillator();
-        osc.type = 'sine';
-        osc.frequency.value = s.freq;
-        osc.connect(out);
-        osc.start(t); osc.stop(t + s.dur);
-    }
-
-    function createNoise(t, dur, out, vol) {
-        const buf = audioCtx.createBuffer(1, audioCtx.sampleRate * dur, audioCtx.sampleRate);
-        const data = buf.getChannelData(0);
-        for (let i = 0; i < data.length; i++) data[i] = (Math.random() * 2 - 1);
-        const src = audioCtx.createBufferSource();
-        src.buffer = buf;
-        const g = audioCtx.createGain();
-        g.gain.setValueAtTime(vol, t);
-        g.gain.exponentialRampToValueAtTime(0.001, t + dur);
-        src.connect(g); g.connect(out);
-        src.start(t); src.stop(t + dur);
-    }
-
-    // ============ TRIGGER SYSTEM ============
-
-    function triggerSound(source) {
-        const now = Date.now();
-        if (now - lastTrigger < COOLDOWN) return;
-        lastTrigger = now;
-
-        const pack = PACKS[currentPack];
-        if (!pack.free && !isPremium) {
-            showToast('🔒 Unlock Premium for this pack!');
-            return;
-        }
-
-        const sound = pack.sounds[Math.floor(Math.random() * pack.sounds.length)];
+    // TRIGGER
+    function triggerSound(source){
+        const now=Date.now();
+        if(now-lastTrigger<COOLDOWN)return;
+        lastTrigger=now;
+        const pack=PACKS[currentPack];
+        if(!pack.free&&!isPremium){showToast('Unlock Premium for this pack');return;}
+        const sound=pack.sounds[Math.floor(Math.random()*pack.sounds.length)];
         playSound(sound);
-
-        // Update stats
-        if (source === 'tap') {
-            stats.taps++;
-            document.getElementById('tapCount').textContent = stats.taps;
-        } else {
-            stats.shakes++;
-            document.getElementById('shakeCount').textContent = stats.shakes;
-        }
-
-        // Combo
+        if(source==='tap'){stats.taps++;document.getElementById('tapCount').textContent=stats.taps;}
+        else{stats.shakes++;document.getElementById('shakeCount').textContent=stats.shakes;}
         currentCombo++;
-        document.getElementById('comboCount').textContent = currentCombo;
-        if (currentCombo > stats.maxCombo) stats.maxCombo = currentCombo;
+        document.getElementById('comboCount').textContent=currentCombo;
+        if(currentCombo>stats.maxCombo) stats.maxCombo=currentCombo;
+        // Combo milestones
+        if(currentCombo===10||currentCombo===25||currentCombo===50||currentCombo===100){
+            showComboPopup(currentCombo);
+        }
         clearTimeout(comboTimer);
-        comboTimer = setTimeout(() => {
-            currentCombo = 0;
-            document.getElementById('comboCount').textContent = '0';
-        }, 2000);
-
-        // Visual feedback
-        const zone = document.getElementById('tapZone');
-        const emoji = document.getElementById('mainEmoji');
+        comboTimer=setTimeout(()=>{currentCombo=0;document.getElementById('comboCount').textContent='0';},2000);
+        const zone=document.getElementById('tapZone');
         zone.classList.add('active');
-        emoji.textContent = pack.emoji;
-        setTimeout(() => zone.classList.remove('active'), 150);
-
-        // Volume bars
+        document.getElementById('mainEmoji').textContent=pack.emoji;
+        setTimeout(()=>zone.classList.remove('active'),150);
+        // Ring effects
+        triggerRings();
         animateBars();
-
-        // Save stats
-        localStorage.setItem('taptoons_stats', JSON.stringify(stats));
+        localStorage.setItem('taptoons_stats',JSON.stringify(stats));
     }
 
-    function animateBars() {
-        const bars = document.querySelectorAll('.volume-bars .bar');
-        bars.forEach(bar => {
-            bar.style.height = (5 + Math.random() * 25) + 'px';
-            bar.style.background = `hsl(${Math.random()*40 + 15}, 100%, 60%)`;
+    function showComboPopup(n){
+        const el=document.getElementById('comboPopup');
+        el.textContent=n+'x';
+        el.classList.add('show');
+        setTimeout(()=>el.classList.remove('show'),800);
+    }
+
+    function triggerRings(){
+        const rings=document.querySelectorAll('.ring');
+        rings.forEach((r,i)=>{
+            r.classList.remove('active');
+            void r.offsetWidth;
+            setTimeout(()=>r.classList.add('active'),i*100);
         });
-        setTimeout(() => {
-            bars.forEach(bar => { bar.style.height = '5px'; });
-        }, 200);
     }
 
-    // ============ TAP DETECTION ============
+    function animateBars(){
+        const bars=document.querySelectorAll('.visualizer .bar');
+        bars.forEach((bar,i)=>{
+            const h=5+Math.random()*32;
+            bar.style.height=h+'px';
+            bar.style.background=`linear-gradient(to top,hsl(${15+i*8},100%,55%),hsl(${30+i*8},100%,70%))`;
+        });
+        setTimeout(()=>{bars.forEach(bar=>{bar.style.height='3px';});},200);
+    }
 
-    const tapZone = document.getElementById('tapZone');
-    tapZone.addEventListener('pointerdown', (e) => {
+    // TAP DETECTION
+    const tapZone=document.getElementById('tapZone');
+    let motionRequested=false;
+
+    tapZone.addEventListener('pointerdown',(e)=>{
         e.preventDefault();
+        if(!motionRequested){motionRequested=true;requestMotionPermission();}
         triggerSound('tap');
-        // Ripple effect
-        const rect = tapZone.getBoundingClientRect();
-        const ripple = document.createElement('div');
-        ripple.className = 'ripple';
-        ripple.style.left = (e.clientX - rect.left - 150) + 'px';
-        ripple.style.top = (e.clientY - rect.top - 150) + 'px';
+        const rect=tapZone.getBoundingClientRect();
+        const ripple=document.createElement('div');
+        ripple.className='ripple';
+        ripple.style.left=(e.clientX-rect.left-175)+'px';
+        ripple.style.top=(e.clientY-rect.top-175)+'px';
         tapZone.appendChild(ripple);
-        setTimeout(() => ripple.remove(), 600);
+        ripple.addEventListener('animationend',()=>ripple.remove());
     });
 
-    // ============ SHAKE DETECTION ============
+    // SHAKE
+    let shakeThreshold=15;
+    let lastAccel={x:0,y:0,z:0};
 
-    let shakeThreshold = 15;
-    let lastAccel = {x:0, y:0, z:0};
-
-    function handleMotion(e) {
-        const acc = e.accelerationIncludingGravity || e.acceleration;
-        if (!acc) return;
-
-        const dx = Math.abs(acc.x - lastAccel.x);
-        const dy = Math.abs(acc.y - lastAccel.y);
-        const dz = Math.abs(acc.z - lastAccel.z);
-        const delta = dx + dy + dz;
-
-        lastAccel = {x: acc.x || 0, y: acc.y || 0, z: acc.z || 0};
-
-        if (delta > shakeThreshold) {
+    function handleMotion(e){
+        const acc=e.accelerationIncludingGravity||e.acceleration;
+        if(!acc)return;
+        const x=acc.x??0,y=acc.y??0,z=acc.z??0;
+        const delta=Math.abs(x-lastAccel.x)+Math.abs(y-lastAccel.y)+Math.abs(z-lastAccel.z);
+        lastAccel={x,y,z};
+        if(delta>shakeThreshold){
             triggerSound('shake');
-            document.getElementById('shakeIndicator').textContent = '🔊 SHAKE DETECTED!';
-            document.getElementById('shakeIndicator').className = 'shake-indicator active';
-            document.getElementById('mainEmoji').parentElement.classList.add('bouncing');
-            setTimeout(() => {
-                document.getElementById('shakeIndicator').textContent = '📱 Shake your device or tap the circle!';
-                document.getElementById('shakeIndicator').className = 'shake-indicator';
-                document.getElementById('mainEmoji').parentElement.classList.remove('bouncing');
-            }, 500);
+            const ind=document.getElementById('shakeIndicator');
+            ind.textContent='SHAKE DETECTED!';
+            ind.className='shake-indicator active';
+            setTimeout(()=>{ind.textContent='Shake your device or tap the circle';ind.className='shake-indicator';},500);
         }
     }
 
-    // Request motion permission (iOS 13+)
-    async function requestMotionPermission() {
-        if (typeof DeviceMotionEvent !== 'undefined' && typeof DeviceMotionEvent.requestPermission === 'function') {
-            try {
-                const perm = await DeviceMotionEvent.requestPermission();
-                if (perm === 'granted') {
-                    window.addEventListener('devicemotion', handleMotion);
-                }
-            } catch (e) {
-                console.log('Motion permission denied');
-            }
-        } else {
-            window.addEventListener('devicemotion', handleMotion);
+    async function requestMotionPermission(){
+        if(typeof DeviceMotionEvent!=='undefined'&&typeof DeviceMotionEvent.requestPermission==='function'){
+            try{
+                const perm=await DeviceMotionEvent.requestPermission();
+                if(perm==='granted') window.addEventListener('devicemotion',handleMotion);
+            }catch(e){}
+        }else{
+            window.addEventListener('devicemotion',handleMotion);
         }
     }
 
-    // ============ KEYBOARD SUPPORT (laptops) ============
-
-    document.addEventListener('keydown', (e) => {
-        if (e.code === 'Space' || e.code === 'Enter') {
+    // KEYBOARD
+    document.addEventListener('keydown',(e)=>{
+        if(e.code==='Space'||e.code==='Enter'){
             e.preventDefault();
+            if(!motionRequested){motionRequested=true;requestMotionPermission();}
             triggerSound('tap');
         }
     });
 
-    // ============ PACKS UI ============
-
-    function renderPacks() {
-        const grid = document.getElementById('packsGrid');
-        grid.innerHTML = '';
-        PACKS.forEach((pack, i) => {
-            const btn = document.createElement('div');
-            btn.className = 'pack-btn' + (i === currentPack ? ' selected' : '') +
-                            (!pack.free && !isPremium ? ' locked' : '');
-            btn.innerHTML = `<span class="pack-emoji">${pack.emoji}</span><span class="pack-name">${pack.name}</span>`;
-            btn.addEventListener('click', () => {
-                if (!pack.free && !isPremium) {
+    // PACKS
+    let packsRendered=false;
+    function renderPacks(){
+        const grid=document.getElementById('packsGrid');
+        if(packsRendered&&grid.children.length===PACKS.length){
+            Array.from(grid.children).forEach((btn,i)=>{
+                btn.className='pack-btn'+(i===currentPack?' selected':'')+
+                    (!PACKS[i].free&&!isPremium?' locked':'');
+            });
+            return;
+        }
+        grid.innerHTML='';
+        PACKS.forEach((pack,i)=>{
+            const btn=document.createElement('div');
+            btn.className='pack-btn'+(i===currentPack?' selected':'')+
+                (!pack.free&&!isPremium?' locked':'');
+            btn.setAttribute('role','button');
+            btn.setAttribute('tabindex','0');
+            btn.setAttribute('aria-label',pack.name+' sound pack'+(pack.free?'':' (premium)'));
+            btn.innerHTML=`<span class="pack-emoji">${pack.emoji}</span><span class="pack-name">${pack.name}</span>`;
+            btn.addEventListener('click',()=>{
+                if(!pack.free&&!isPremium){
                     document.getElementById('premiumBanner').scrollIntoView({behavior:'smooth'});
-                    showToast('🔒 Premium pack! Unlock all 8 packs for $0.99');
+                    showToast('Premium pack — unlock all 8 for $0.99');
                     return;
                 }
-                currentPack = i;
-                document.getElementById('mainEmoji').textContent = pack.emoji;
+                currentPack=i;
+                document.getElementById('mainEmoji').textContent=pack.emoji;
                 renderPacks();
             });
             grid.appendChild(btn);
         });
+        packsRendered=true;
     }
 
-    // ============ PAYMENTS ============
-
-    function buyStripe() {
-        // Stripe Checkout redirect
-        // Replace with your actual Stripe payment link
-        const stripeUrl = 'https://buy.stripe.com/taptoons_premium';
-        window.open(stripeUrl, '_blank');
+    // PAYMENTS
+    function buyStripe(){
+        const url='https://buy.stripe.com/taptoons_premium';
+        const w=window.open(url,'_blank');
+        if(!w||w.closed) window.location.href=url;
         showToast('Redirecting to payment...');
     }
-
-    function buyPaypal() {
-        // PayPal payment
-        // Replace with your actual PayPal.me link or button ID
-        const paypalUrl = 'https://www.paypal.com/paypalme/PadraoBitcoin/0.99';
-        window.open(paypalUrl, '_blank');
+    function buyPaypal(){
+        const url='https://www.paypal.com/paypalme/PadraoBitcoin/0.99';
+        const w=window.open(url,'_blank');
+        if(!w||w.closed) window.location.href=url;
         showToast('Redirecting to PayPal...');
     }
 
-    // Activation code check
-    function activatePremium(code) {
-        // Simple code validation — in production use server-side
-        const validCodes = new Set();
-        if (code && code.startsWith('TAPTOONS-')) {
-            isPremium = true;
-            localStorage.setItem('taptoons_premium', 'true');
+    function activatePremium(code){
+        if(!code)return;
+        const validPrefixes=['TAPTOONS-PAID-','TAPTOONS-STRIPE-','TAPTOONS-PP-'];
+        if(validPrefixes.some(p=>code.startsWith(p))&&code.length>20){
+            isPremium=true;
+            localStorage.setItem('taptoons_premium','true');
+            localStorage.setItem('taptoons_code',code);
             renderPacks();
-            showToast('🎉 Premium unlocked! All packs available!');
-            if (document.getElementById('premiumBanner')) {
-                document.getElementById('premiumBanner').style.display = 'none';
-            }
+            showToast('Premium unlocked! All packs available!');
+            const banner=document.getElementById('premiumBanner');
+            if(banner) banner.style.display='none';
         }
     }
 
-    // Check URL params for activation
-    const urlParams = new URLSearchParams(window.location.search);
-    if (urlParams.get('activate')) {
-        activatePremium(urlParams.get('activate'));
-    }
+    const urlParams=new URLSearchParams(window.location.search);
+    if(urlParams.get('activate')) activatePremium(urlParams.get('activate'));
 
-    // ============ PWA INSTALL ============
-
-    let deferredPrompt = null;
-    window.addEventListener('beforeinstallprompt', (e) => {
-        e.preventDefault();
-        deferredPrompt = e;
-        document.getElementById('installPrompt').style.display = 'block';
+    // PWA INSTALL
+    let deferredPrompt=null;
+    window.addEventListener('beforeinstallprompt',(e)=>{
+        e.preventDefault();deferredPrompt=e;
+        document.getElementById('installPrompt').style.display='block';
     });
-
-    function installApp() {
-        if (deferredPrompt) {
+    function installApp(){
+        if(deferredPrompt){
             deferredPrompt.prompt();
-            deferredPrompt.userChoice.then(r => {
-                document.getElementById('installPrompt').style.display = 'none';
-                deferredPrompt = null;
+            deferredPrompt.userChoice.then(()=>{
+                document.getElementById('installPrompt').style.display='none';
+                deferredPrompt=null;
             });
         }
     }
-    function dismissInstall() {
-        document.getElementById('installPrompt').style.display = 'none';
-    }
+    function dismissInstall(){document.getElementById('installPrompt').style.display='none';}
 
-    // ============ TOAST ============
-
-    function showToast(msg) {
-        const toast = document.getElementById('toast');
-        toast.textContent = msg;
+    // TOAST
+    let toastTimer=null;
+    function showToast(msg){
+        const toast=document.getElementById('toast');
+        toast.textContent=msg;
         toast.classList.add('show');
-        setTimeout(() => toast.classList.remove('show'), 2000);
+        clearTimeout(toastTimer);
+        toastTimer=setTimeout(()=>toast.classList.remove('show'),2000);
     }
 
-    // ============ CONTROLS ============
-
-    document.getElementById('sensitivity').addEventListener('input', (e) => {
-        shakeThreshold = parseInt(e.target.value);
+    // SENSITIVITY
+    document.getElementById('sensitivity').addEventListener('input',(e)=>{
+        shakeThreshold=45-parseInt(e.target.value);
     });
 
-    // ============ INIT ============
-
-    function init() {
-        // Load stats
-        document.getElementById('tapCount').textContent = stats.taps;
-        document.getElementById('shakeCount').textContent = stats.shakes;
-
-        // Render packs
+    function init(){
+        document.getElementById('tapCount').textContent=stats.taps;
+        document.getElementById('shakeCount').textContent=stats.shakes;
         renderPacks();
-
-        // Hide premium banner if already bought
-        if (isPremium) {
-            document.getElementById('premiumBanner').style.display = 'none';
+        if(isPremium){
+            const b=document.getElementById('premiumBanner');
+            if(b) b.style.display='none';
         }
-
-        // Request motion access
-        requestMotionPermission();
-
-        // Init audio on first interaction
-        document.addEventListener('click', () => initAudio(), {once: true});
-        document.addEventListener('touchstart', () => initAudio(), {once: true});
+        document.addEventListener('click',()=>initAudio(),{once:true});
+        document.addEventListener('touchstart',()=>initAudio(),{once:true});
     }
 
-    // Register Service Worker
-    if ('serviceWorker' in navigator) {
-        navigator.serviceWorker.register('/sw.js').catch(() => {});
+    if('serviceWorker' in navigator){
+        navigator.serviceWorker.register('sw.js').catch(()=>{});
     }
 
     init();

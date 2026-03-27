@@ -334,15 +334,18 @@
             animation:shimmer 3s ease-in-out infinite;
         }
         .btn-buy:active{transform:scale(0.97)}
-        .btn-stripe{
+        .btn-paypal{
             background:linear-gradient(135deg,#FF6B35,#E04B1A);
             color:#fff;
-            box-shadow:0 4px 20px rgba(255,107,53,0.3);
+            box-shadow:0 4px 20px rgba(255,107,53,0.4);
+            font-size:18px;
         }
-        .btn-paypal{
-            background:linear-gradient(135deg,#0070BA,#003087);
-            color:#fff;
-            box-shadow:0 4px 20px rgba(0,112,186,0.2);
+        .btn-stripe{
+            background:var(--glass);
+            border:1px solid var(--glass-border);
+            color:var(--text2);
+            box-shadow:none;
+            font-size:14px;
         }
         .btn-note{font-size:11px;color:var(--text3);text-align:center;margin-top:4px}
         /* FOOTER */
@@ -518,11 +521,11 @@
                 <li><span class="check">&#10003;</span> Combo multiplier effects</li>
                 <li><span class="check">&#10003;</span> Lifetime free updates</li>
             </ul>
-            <button class="btn-buy btn-stripe" id="btnStripe" aria-label="Buy with credit card" onclick="buyStripe()">
-                Buy with Card — $0.99
-            </button>
             <button class="btn-buy btn-paypal" id="btnPaypal" aria-label="Buy with PayPal" onclick="buyPaypal()">
-                Pay with PayPal — $0.99
+                Pay Now — $0.99
+            </button>
+            <button class="btn-buy btn-stripe" id="btnStripe" aria-label="Buy with credit card" onclick="buyStripe()">
+                Pay with Card — $0.99
             </button>
             <p class="btn-note">Secure payment. Instant access. No subscription.</p>
         </div>

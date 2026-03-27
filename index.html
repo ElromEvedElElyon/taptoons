@@ -522,12 +522,12 @@
                 <li><span class="check">&#10003;</span> Lifetime free updates</li>
             </ul>
             <button class="btn-buy btn-paypal" id="btnPaypal" aria-label="Buy with PayPal" onclick="buyPaypal()">
-                Pay Now — $0.99
+                Buy Now — $0.99
             </button>
-            <button class="btn-buy btn-stripe" id="btnStripe" aria-label="Buy with credit card" onclick="buyStripe()">
-                Pay with Card — $0.99
+            <button class="btn-buy btn-activate" id="btnActivate" aria-label="Activate premium" onclick="showActivatePrompt()" style="background:linear-gradient(135deg,#06D6A0,#00B894);margin-top:8px;font-size:0.85em">
+                Already Paid? Activate Premium
             </button>
-            <p class="btn-note">Secure payment. Instant access. No subscription.</p>
+            <p class="btn-note">Secure PayPal payment. Instant access. No subscription.</p>
         </div>
 
         <!-- FOOTER -->
@@ -845,17 +845,25 @@
     }
 
     // PAYMENTS
-    function buyStripe(){
-        const url='https://buy.stripe.com/test_00waEWeLU96mfAo09t6wE02';
-        const w=window.open(url,'_blank');
-        if(!w||w.closed) window.location.href=url;
-        showToast('Redirecting to payment...');
-    }
     function buyPaypal(){
         const url='https://www.paypal.com/paypalme/PadraoBitcoin/0.99';
+        localStorage.setItem('taptoons_pending_payment','true');
         const w=window.open(url,'_blank');
         if(!w||w.closed) window.location.href=url;
         showToast('Redirecting to PayPal...');
+    }
+    function showActivatePrompt(){
+        const paid=localStorage.getItem('taptoons_pending_payment');
+        if(paid||confirm('Have you completed the $0.99 payment via PayPal?')){
+            isPremium=true;
+            localStorage.setItem('taptoons_premium','true');
+            localStorage.setItem('taptoons_code','TAPTOONS-PP-'+Date.now());
+            localStorage.removeItem('taptoons_pending_payment');
+            renderPacks();
+            showToast('Premium unlocked! All 8 packs available!');
+            const banner=document.getElementById('premiumBanner');
+            if(banner) banner.style.display='none';
+        }
     }
 
     function activatePremium(code){
@@ -874,6 +882,14 @@
 
     const urlParams=new URLSearchParams(window.location.search);
     if(urlParams.get('activate')) activatePremium(urlParams.get('activate'));
+
+    // Auto-show activate prompt if user returns after PayPal payment
+    if(localStorage.getItem('taptoons_pending_payment')&&!isPremium){
+        setTimeout(()=>{
+            const btn=document.getElementById('btnActivate');
+            if(btn){btn.style.animation='pulseGlow 1.5s infinite';btn.textContent='Payment detected — Tap to Activate!';}
+        },1000);
+    }
 
     // PWA INSTALL
     let deferredPrompt=null;

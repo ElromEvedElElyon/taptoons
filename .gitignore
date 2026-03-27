@@ -1,1 +1,10 @@
 stripe-config.json
+.claude/
+*.env
+*secrets*
+*credentials*
+*_creds*
+*.key
+*.pem
+activate-stripe-live.sh
+node_modules/

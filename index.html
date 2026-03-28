@@ -37,10 +37,6 @@ body::after{content:'';position:fixed;top:0;left:0;width:100%;height:100%;pointe
 /* Vignette */
 body::before{content:'';position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:9998;
   background:radial-gradient(ellipse at center,transparent 50%,rgba(0,0,0,0.6) 100%)}
-/* Neon glow utilities */
-.glow-gold{text-shadow:0 0 10px var(--gold),0 0 20px var(--gold),0 0 40px rgba(255,214,10,0.4)}
-.glow-cyan{text-shadow:0 0 10px var(--cyan),0 0 20px var(--cyan),0 0 40px rgba(0,245,255,0.3)}
-.glow-red{text-shadow:0 0 10px var(--red),0 0 20px var(--red),0 0 40px rgba(255,0,110,0.3)}
 /* Header */
 .header{text-align:center;padding:20px 8px 10px;background:linear-gradient(180deg,var(--dark) 0%,transparent 100%);position:relative}
 .header h1{font-size:16px;color:var(--gold);letter-spacing:3px;
@@ -639,8 +635,6 @@ function renderChar(charIdx,canvas,scale=2){
 }
 
 // ===== UI RENDERING =====
-let currentPack=0;
-
 function renderPacks(){
   const container=document.getElementById('tab-sounds');
   container.innerHTML='';
@@ -697,7 +691,7 @@ document.querySelectorAll('.tab').forEach(tab=>{
 const GC=document.getElementById('gameCanvas');
 const gctx=GC.getContext('2d');
 let gameRunning=false,gameOver=false,charIdx=0;
-let playerY=0,velY=0,obstacles=[],gameScore=0,gameSpeed=2,frameCount=0;
+let playerY=0,velY=0,obstacles=[],gameScore=0,gameSpeed=2.5,frameCount=0;
 const GROUND_Y=160,PLAYER_X=40,GRAVITY=0.6,JUMP_FORCE=-10;
 let hiScore=parseInt(localStorage.getItem('taptoons_hiscore'))||0;
 document.getElementById('hiscore').textContent=hiScore;
@@ -767,8 +761,8 @@ function gameLoop(){
   // Move obstacles
   obstacles.forEach(o=>o.x-=gameSpeed);
   obstacles=obstacles.filter(o=>o.x>-30);
-  // Score
-  obstacles.forEach(o=>{if(Math.abs(o.x-PLAYER_X)<2&&!o.scored){o.scored=true;gameScore++;
+  // Score — trigger when obstacle passes player
+  obstacles.forEach(o=>{if(o.x+o.w<PLAYER_X&&!o.scored){o.scored=true;gameScore++;
     document.getElementById('score').textContent=gameScore;
     if(gameScore%10===0) gameSpeed+=0.3;
   }});
@@ -965,10 +959,6 @@ gctx.fillStyle='#f4b41b';gctx.font='12px "Press Start 2P"';
 gctx.fillText('PIXEL RUNNER',110,80);
 gctx.fillStyle='#f0f0e8';gctx.font='8px "Press Start 2P"';
 gctx.fillText('Tap to start!',140,105);
-// Render first character preview
-const previewCv=document.createElement('canvas');
-renderChar(0,previewCv,3);
-
 // ===== STARFIELD BACKGROUND =====
 const sfCanvas=document.getElementById('starfield');
 const sfCtx=sfCanvas.getContext('2d');

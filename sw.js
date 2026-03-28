@@ -1,5 +1,5 @@
-// TapToons Service Worker v1.2 — Offline Support + Smart Cache
-const CACHE_NAME = 'taptoons-v2';
+// TapToons Service Worker v2.0 Pixel Art — Offline Support + Smart Cache
+const CACHE_NAME = 'taptoons-v3';
 const ASSETS = [
     './',
     './index.html',

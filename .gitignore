@@ -8,3 +8,5 @@ stripe-config.json
 *.pem
 activate-stripe-live.sh
 node_modules/
+check-sales.sh
+sale-notification.sh

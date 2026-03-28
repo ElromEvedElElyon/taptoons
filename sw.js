@@ -1,5 +1,5 @@
 // TapToons Service Worker v2.0 Pixel Art — Offline Support + Smart Cache
-const CACHE_NAME = 'taptoons-v5';
+const CACHE_NAME = 'taptoons-v4';
 const ASSETS = [
     './',
     './index.html',
@@ -31,7 +31,6 @@ self.addEventListener('activate', (e) => {
 self.addEventListener('fetch', (e) => {
     const url = new URL(e.request.url);
     if (url.pathname.endsWith('.html') || url.pathname === '/' || url.pathname.endsWith('/')) {
-        // Stale-while-revalidate for HTML
         e.respondWith(
             caches.match(e.request).then(cached => {
                 const fetchPromise = fetch(e.request).then(response => {
@@ -45,7 +44,6 @@ self.addEventListener('fetch', (e) => {
             })
         );
     } else {
-        // Cache-first for icons, fonts, etc
         e.respondWith(
             caches.match(e.request).then(cached => cached || fetch(e.request))
         );

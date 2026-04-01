@@ -1,8 +1,8 @@
 {
   "id": "/",
-  "name": "TapToons - Pixel Art Sounds & Game",
+  "name": "TapToons v3 - Arcade Monster Runner",
   "short_name": "TapToons",
-  "description": "100 funny pixel art sounds + retro mini-game! Shake, tap, laugh! $0.99 premium with 70 extra sounds.",
+  "description": "100 funny sounds + arcade monster runner with combos, double-jump & power-ups! $0.99 premium.",
   "start_url": ".",
   "display": "standalone",
   "background_color": "#1a1c2c",

@@ -1,8 +1,8 @@
 {
   "id": "/",
-  "name": "TapToons v3 - Arcade Monster Runner",
-  "short_name": "TapToons",
-  "description": "100 funny sounds + arcade monster runner with combos, double-jump & power-ups! $0.99 premium.",
+  "name": "TapToon Sheik - Interactive Character Gallery",
+  "short_name": "TapToon Sheik",
+  "description": "10 interactive characters with unique personalities! Tap, shake & double-tap for reactions + arcade monster runner game. $0.99 premium.",
   "start_url": ".",
   "display": "standalone",
   "background_color": "#1a1c2c",

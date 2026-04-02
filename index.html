@@ -3,11 +3,11 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0,viewport-fit=cover">
-<meta name="description" content="TapToons Arcade Edition v3 - 100 funny sounds, Sonic-style monster runner with combos, double-jump, power-ups! $0.99 premium.">
+<meta name="description" content="TapToon Sheik - 10 interactive characters with unique personalities! Tap, shake & double-tap for reactions + arcade monster runner game. $0.99 premium.">
 <meta name="theme-color" content="#1a1c2c">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="apple-mobile-web-app-title" content="TapToons">
+<meta name="apple-mobile-web-app-title" content="TapToon Sheik">
 <meta name="format-detection" content="telephone=no">
 <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data:; connect-src 'self'; media-src 'self' data: blob:;">
 <link rel="manifest" href="manifest.json">
@@ -15,7 +15,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
-<title>TapToons v3 - Monster Runner Arcade</title>
+<title>TapToon Sheik - Interactive Character Gallery</title>
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
 :root{
@@ -50,31 +50,33 @@ body::before{content:'';position:fixed;top:0;left:0;width:100%;height:100%;point
   box-shadow:0 -2px 10px rgba(255,214,10,0.2),inset 0 1px 0 rgba(255,214,10,0.1)}
 .tab-content{display:none;flex:1;overflow-y:auto;padding:12px 8px 120px}
 .tab-content.active{display:block}
-.pack{margin-bottom:16px;background:linear-gradient(135deg,var(--surface),var(--surface2));padding:12px;position:relative;
-  border:1px solid var(--surface3);border-radius:4px;transition:all .3s ease}
-.pack:hover{border-color:var(--cyan);box-shadow:0 0 15px rgba(0,245,255,0.1)}
-.pack.locked{opacity:0.65;filter:saturate(0.5)}
-.pack-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}
-.pack-name{font-size:9px;color:var(--gold);text-shadow:0 0 8px rgba(255,214,10,0.3)}
-.pack-badge{font-size:7px;padding:4px 8px;background:var(--green);color:var(--dark);border-radius:2px;
-  box-shadow:0 0 8px rgba(0,255,135,0.3)}
-.pack-badge.premium{background:linear-gradient(135deg,var(--red),var(--purple));color:var(--white);
-  box-shadow:0 0 8px rgba(255,0,110,0.3)}
-.pack-lock{position:absolute;top:0;left:0;width:100%;height:100%;display:flex;align-items:center;justify-content:center;
-  background:rgba(15,14,29,0.85);z-index:5;cursor:pointer;font-size:8px;color:var(--gold);flex-direction:column;gap:8px;
-  backdrop-filter:blur(2px);border-radius:4px;transition:all .2s}
-.pack-lock:hover{background:rgba(15,14,29,0.75);text-shadow:0 0 15px var(--gold)}
-.sounds-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:6px}
-.snd-btn{aspect-ratio:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;
-  background:linear-gradient(135deg,var(--surface2),var(--surface3));border:1px solid rgba(255,255,255,0.05);
-  color:var(--white);font-family:var(--font);font-size:6px;cursor:pointer;border-radius:4px;
-  padding:4px;transition:all .15s ease;position:relative;text-align:center;word-break:break-word;line-height:1.3;
-  box-shadow:0 2px 4px rgba(0,0,0,0.3)}
-.snd-btn:hover{border-color:var(--cyan);box-shadow:0 0 12px rgba(0,245,255,0.2),0 2px 8px rgba(0,0,0,0.4);transform:translateY(-2px)}
-.snd-btn:active{transform:scale(0.88);background:var(--gold);color:var(--dark);
-  box-shadow:0 0 20px var(--gold),0 0 40px rgba(255,214,10,0.3)}
-.snd-btn .snd-label{font-size:8px;line-height:1.2;text-align:center;color:var(--white);text-shadow:0 0 4px rgba(255,255,255,0.2)}
-.snd-btn{border-left:3px solid var(--cyan)}
+.char-gallery{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;padding:4px}
+.char-card{background:linear-gradient(135deg,var(--surface),var(--surface2));border:2px solid var(--surface3);
+  border-radius:8px;padding:10px 6px 12px;text-align:center;position:relative;cursor:pointer;
+  transition:all .2s ease;overflow:hidden;min-height:240px}
+.char-card:active{transform:scale(0.95);border-color:var(--gold);box-shadow:0 0 25px rgba(255,214,10,0.4)}
+.char-card.locked{opacity:0.5;filter:saturate(0.3)}
+.char-card.locked::after{content:'\1f512 PREMIUM';position:absolute;top:0;left:0;right:0;bottom:0;
+  display:flex;align-items:center;justify-content:center;background:rgba(15,14,29,0.85);
+  font-family:var(--font);font-size:9px;color:var(--gold);backdrop-filter:blur(2px);z-index:5;
+  text-shadow:0 0 10px var(--gold)}
+.char-avatar{display:block;margin:0 auto 6px;image-rendering:pixelated;image-rendering:crisp-edges;width:120px;height:150px}
+.char-name{font-size:9px;color:var(--gold);text-shadow:0 0 8px rgba(255,214,10,0.4);margin-bottom:3px;letter-spacing:1px}
+.char-personality{font-size:6px;color:var(--cyan);text-shadow:0 0 6px rgba(0,245,255,0.3);margin-bottom:6px}
+.char-badge{font-size:6px;padding:3px 8px;border-radius:2px;display:inline-block}
+.char-badge.free{background:var(--green);color:var(--dark);box-shadow:0 0 6px rgba(0,255,135,0.3)}
+.char-badge.premium{background:linear-gradient(135deg,var(--red),var(--purple));color:var(--white);box-shadow:0 0 6px rgba(255,0,110,0.3)}
+.char-taps{font-size:6px;color:var(--gray);margin-top:4px}
+.char-reaction{font-size:6px;color:var(--cyan);margin-top:2px;opacity:0;transition:opacity .3s;min-height:10px}
+.char-reaction.show{opacity:1}
+.speech-bubble{position:fixed;top:45%;left:50%;transform:translate(-50%,-50%) scale(0);
+  background:var(--gold);color:var(--dark);font-family:var(--font);font-size:10px;padding:14px 22px;border-radius:8px;
+  z-index:200;pointer-events:none;transition:transform .2s cubic-bezier(0.34,1.56,0.64,1),opacity .3s;
+  opacity:0;max-width:85%;text-align:center;box-shadow:0 0 30px rgba(255,214,10,0.5),0 8px 32px rgba(0,0,0,0.4);
+  line-height:1.4}
+.speech-bubble.show{transform:translate(-50%,-50%) scale(1);opacity:1}
+.speech-bubble::after{content:'';position:absolute;bottom:-10px;left:50%;transform:translateX(-50%);
+  border-left:10px solid transparent;border-right:10px solid transparent;border-top:10px solid var(--gold)}
 .game-area{text-align:center}
 .game-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;font-size:8px}
 .game-score{color:var(--gold)}
@@ -147,13 +149,12 @@ body::before{content:'';position:fixed;top:0;left:0;width:100%;height:100%;point
 .toast.show{opacity:1;transform:translate(-50%,-50%) scale(1)}
 .shake-indicator{position:fixed;top:60px;right:8px;font-size:7px;color:var(--cyan);opacity:0;transition:opacity .3s;z-index:50}
 .shake-indicator.active{opacity:1}
-@media(min-width:400px){
-  .sounds-grid{grid-template-columns:repeat(5,1fr)}
-  .snd-btn .emoji{font-size:20px}
-  .snd-btn{font-size:7px}
+@media(max-width:320px){
+  .char-gallery{grid-template-columns:1fr}
+  .char-avatar{width:140px;height:175px}
 }
 @media(min-width:600px){
-  .sounds-grid{grid-template-columns:repeat(10,1fr)}
+  .char-gallery{grid-template-columns:repeat(3,1fr)}
   html{font-size:11px}
 }
 ::-webkit-scrollbar{width:8px}
@@ -167,12 +168,12 @@ body::before{content:'';position:fixed;top:0;left:0;width:100%;height:100%;point
 <canvas id="confettiCanvas" style="position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:150"></canvas>
 <div class="app-wrap">
 <div class="header">
-  <h1>TAPTOONS</h1>
-  <div class="ver">ARCADE EDITION v3.0</div>
+  <h1>TAPTOON SHEIK</h1>
+  <div class="ver">CHARACTER EDITION v1.0</div>
 </div>
 
 <div class="tabs">
-  <button class="tab active" data-tab="sounds">SOUNDS</button>
+  <button class="tab active" data-tab="sounds">CHARACTERS</button>
   <button class="tab" data-tab="game">GAME</button>
   <button class="tab" data-tab="settings">SETTINGS</button>
 </div>
@@ -228,19 +229,20 @@ body::before{content:'';position:fixed;top:0;left:0;width:100%;height:100%;point
     <button class="btn-buy activate" onclick="showActivatePrompt()" style="max-width:100%">ALREADY PAID? ACTIVATE</button>
   </div>
   <div class="setting-row" style="justify-content:center">
-    <span style="font-size:6px;color:var(--gray)">TapToons v3.0 Arcade Edition | Em nome do Senhor Jesus Cristo</span>
+    <span style="font-size:6px;color:var(--gray)">TapToon Sheik v1.0 | Em nome do Senhor Jesus Cristo</span>
   </div>
 </div>
 
 <div class="premium-banner" id="premiumBanner">
-  <div class="premium-title">INSERT COIN - $0.99</div>
-  <div class="premium-subtitle">Unlock 70 premium sounds + game sounds!</div>
+  <div class="premium-title">UNLOCK ALL CHARACTERS - $0.99</div>
+  <div class="premium-subtitle">7 premium characters + all reactions!</div>
   <button class="btn-buy" onclick="buyStripe()">BUY NOW - $0.99</button>
   <button class="btn-buy paypal" onclick="buyPaypal()">PAY WITH PAYPAL</button>
 </div>
 
 <div class="shake-indicator" id="shakeInd">SHAKE!</div>
 <div class="toast" id="toast"></div>
+<div class="speech-bubble" id="speechBubble"></div>
 </div>
 
 <script>
@@ -370,143 +372,252 @@ function repeat(fn,times,gap){
   for(let i=0;i<times;i++) setTimeout(fn,i*gap*1000);
 }
 
-// ===== 100 SOUND DEFINITIONS =====
-const SOUNDS=[
-// Pack 0: Complaints (FREE)
-[
-  {n:"Ow!",e:"\ud83e\udd15",f:()=>{formant(300,'a',0.2);setTimeout(()=>sweep(800,200,0.3,'sawtooth'),100)}},
-  {n:"Pain",e:"\ud83d\ude2b",f:()=>{formant(180,'o',0.8,6,15);sweep(400,150,0.5)}},
-  {n:"Ouch",e:"\ud83d\ude16",f:()=>{formant(350,'a',0.15);noise(0.1,3000);setTimeout(()=>sweep(600,200,0.2),80)}},
-  {n:"Whimper",e:"\ud83e\udd7a",f:()=>{formant(400,'e',0.6,7,20);setTimeout(()=>formant(350,'i',0.4,8,15),300)}},
-  {n:"Not\nagain",e:"\ud83d\ude29",f:()=>{formant(250,'o',0.3);setTimeout(()=>{formant(200,'e',0.3);setTimeout(()=>formant(180,'a',0.4),200)},200)}},
-  {n:"Why\nme?",e:"\ud83d\ude22",f:()=>{sweep(400,250,0.4,'sawtooth');setTimeout(()=>formant(300,'i',0.5,6,20),300)}},
-  {n:"That\nhurts",e:"\ud83d\ude23",f:()=>{formant(280,'a',0.3,4,8);noise(0.05,4000);setTimeout(()=>sweep(350,150,0.4),200)}},
-  {n:"Ugh!",e:"\ud83d\ude24",f:()=>{noise(0.08,2000);formant(150,'u',0.3);sweep(300,100,0.2,'square')}},
-  {n:"Mild\nprotest",e:"\ud83d\ude12",f:()=>{formant(220,'e',0.4,3,5);setTimeout(()=>formant(200,'o',0.5,4,8),300)}},
-  {n:"Drama\nsigh",e:"\ud83d\ude14",f:()=>{noise(0.6,800,'highpass');formant(200,'a',0.8,2,3)}}
-],
-// Pack 1: Pleas (FREE)
-[
-  {n:"Please\ndon't!",e:"\ud83d\ude4f",f:()=>{formant(350,'i',0.3,5,12);setTimeout(()=>formant(280,'o',0.4,6,15),250)}},
-  {n:"Sorry!",e:"\ud83d\ude25",f:()=>{formant(300,'o',0.3);setTimeout(()=>formant(250,'i',0.4,4,8),200)}},
-  {n:"Nervous",e:"\ud83d\ude30",f:()=>{repeat(()=>formant(320+Math.random()*40,'e',0.1,12,30),5,0.15)}},
-  {n:"Mercy!",e:"\ud83d\ude47",f:()=>{formant(380,'e',0.4,5,10);setTimeout(()=>sweep(500,200,0.3,'sawtooth'),300)}},
-  {n:"I'll do\nbetter",e:"\ud83d\ude13",f:()=>{formant(250,'a',0.2);setTimeout(()=>formant(280,'u',0.2),150);setTimeout(()=>formant(300,'e',0.3),300)}},
-  {n:"Bargain",e:"\ud83e\udd1d",f:()=>{formant(270,'a',0.3,4,6);setTimeout(()=>formant(320,'i',0.3,5,10),250)}},
-  {n:"Whine",e:"\ud83d\ude2d",f:()=>{sweep(500,350,0.8,'sawtooth');formant(350,'e',0.6,8,25)}},
-  {n:"Beg",e:"\ud83e\udee3",f:()=>{formant(400,'i',0.2);setTimeout(()=>formant(350,'i',0.2),150);setTimeout(()=>formant(300,'i',0.3),300)}},
-  {n:"Plea",e:"\ud83d\ude4e",f:()=>{formant(300,'e',0.5,6,15);sweep(400,250,0.4)}},
-  {n:"Give\nup",e:"\ud83c\udff3\ufe0f",f:()=>{formant(180,'o',0.6,2,3);setTimeout(()=>sweep(200,80,0.5),400)}}
-],
-// Pack 2: Cartoon (FREE) — UPGRADED Looney Toons style
-[
-  {n:"Boing",e:"\ud83e\udd98",f:()=>{sweep(200,1000,0.12,'sine');sweep(300,900,0.14,'triangle');setTimeout(()=>{sweep(600,250,0.18,'sine');tone(400,0.05,'square',0.001)},80);setTimeout(()=>sweep(400,200,0.1),160)}},
-  {n:"Pop",e:"\ud83d\udca5",f:()=>{impact(800,0.1);tone(1200,0.05,'sine',0.001);noise(0.04,6000);setTimeout(()=>tone(900,0.03,'triangle'),40)}},
-  {n:"Slide\nwhistle",e:"\ud83c\udfb5",f:()=>{sweep(300,2000,0.45,'sine');sweep(350,1800,0.4,'triangle');setTimeout(()=>{sweep(1800,250,0.5,'sine');sweep(1600,300,0.45,'triangle')},450)}},
-  {n:"Bonk",e:"\ud83d\udca2",f:()=>{impact(300,0.2);noise(0.12,2500);tone(200,0.1,'square',0.001);setTimeout(()=>{impact(250,0.1);tone(150,0.06,'square')},80)}},
-  {n:"Splat",e:"\ud83d\udca6",f:()=>{noise(0.25,4000);noise(0.15,1500,'bandpass');impact(120,0.25);sweep(600,40,0.25);setTimeout(()=>noise(0.12,2500,'bandpass'),100)}},
-  {n:"Zip",e:"\u26a1",f:()=>{sweep(200,5000,0.08,'sawtooth');sweep(300,4000,0.1,'square');noise(0.06,8000);setTimeout(()=>tone(3000,0.02,'sine'),60)}},
-  {n:"Sproing",e:"\ud83c\udf00",f:()=>{wobble(400,0.5,35,250,'sine');sweep(300,1200,0.3);setTimeout(()=>{wobble(600,0.3,25,150,'triangle');sweep(500,900,0.2)},150)}},
-  {n:"Honk",e:"\ud83d\udce2",f:()=>{tone(280,0.35,'square');tone(220,0.35,'sawtooth');tone(260,0.3,'triangle');setTimeout(()=>tone(300,0.15,'square'),200)}},
-  {n:"Whoosh",e:"\ud83d\udca8",f:()=>{noise(0.5,2500,'bandpass');sweep(800,80,0.35);noise(0.3,1200,'highpass');sweep(400,60,0.25);setTimeout(()=>noise(0.2,800),150)}},
-  {n:"Thwack",e:"\ud83d\udc4a",f:()=>{noise(0.1,6000);impact(250,0.18);tone(150,0.1,'square',0.001);setTimeout(()=>{noise(0.06,3000);impact(180,0.1)},50)}}
-],
-// Pack 3: Laughs (PREMIUM)
-[
-  {n:"Belly\nlaugh",e:"\ud83d\ude02",f:()=>{repeat(()=>formant(180+Math.random()*30,'a',0.15,6,10),6,0.2)}},
-  {n:"Giggle",e:"\ud83e\udd2d",f:()=>{repeat(()=>formant(400+Math.random()*50,'i',0.1,8,15),8,0.12)}},
-  {n:"Cackle",e:"\ud83d\ude06",f:()=>{repeat(()=>{formant(300+Math.random()*60,'a',0.12,5,20)},5,0.18)}},
-  {n:"Snicker",e:"\ud83d\ude0f",f:()=>{repeat(()=>noise(0.06,3000),4,0.15);formant(350,'i',0.3,10,5)}},
-  {n:"Evil\nlaugh",e:"\ud83d\ude08",f:()=>{formant(120,'a',0.3);setTimeout(()=>repeat(()=>formant(130,'a',0.2,4,8),3,0.25),200)}},
-  {n:"Nervous\nlaugh",e:"\ud83d\ude05",f:()=>{repeat(()=>formant(380+Math.random()*40,'e',0.08,12,20),7,0.1)}},
-  {n:"Snort",e:"\ud83d\udc3d",f:()=>{noise(0.15,1500);formant(200,'o',0.2,15,30);noise(0.1,2000)}},
-  {n:"Wheeze",e:"\ud83d\ude2e\u200d\ud83d\udca8",f:()=>{noise(0.8,1000,'highpass');formant(250,'i',0.5,3,5)}},
-  {n:"Chuckle",e:"\ud83d\ude04",f:()=>{repeat(()=>formant(220,'a',0.15,5,8),3,0.22)}},
-  {n:"Maniac",e:"\ud83e\udd2a",f:()=>{formant(150,'a',0.4,3,5);setTimeout(()=>repeat(()=>formant(160+Math.random()*50,'a',0.15,5,15),6,0.16),300)}}
-],
-// Pack 4: Screams (PREMIUM)
-[
-  {n:"Scream",e:"\ud83d\ude31",f:()=>{formant(400,'a',0.8,8,30);sweep(400,1200,0.5,'sawtooth')}},
-  {n:"Shriek",e:"\ud83d\ude40",f:()=>{formant(600,'i',0.5,10,40);sweep(800,2000,0.3)}},
-  {n:"Battle\ncry",e:"\u2694\ufe0f",f:()=>{formant(200,'a',0.3);setTimeout(()=>{formant(250,'a',0.6,5,15);sweep(300,600,0.4,'sawtooth')},200)}},
-  {n:"Gasp",e:"\ud83d\ude2e",f:()=>{noise(0.2,3000,'highpass');formant(350,'o',0.3,2,3)}},
-  {n:"NO!",e:"\ud83d\udeab",f:()=>{formant(250,'o',0.6,4,10);sweep(300,150,0.4,'square')}},
-  {n:"Yelp",e:"\u2757",f:()=>{formant(500,'a',0.15);sweep(600,300,0.15)}},
-  {n:"Horror",e:"\ud83d\udc7b",f:()=>{formant(350,'a',1.0,6,25);sweep(400,800,0.8);noise(0.5,1500)}},
-  {n:"Victory",e:"\ud83c\udfc6",f:()=>{formant(300,'a',0.5,3,5);chord([400,500,600],0.3);sweep(400,800,0.3)}},
-  {n:"Fading\nscream",e:"\ud83c\udf2a\ufe0f",f:()=>{formant(400,'a',1.2,6,20);sweep(500,100,1.0)}},
-  {n:"Double",e:"\ud83d\udc6f",f:()=>{formant(350,'a',0.3);setTimeout(()=>formant(400,'a',0.5,8,25),300)}}
-],
-// Pack 5: Retro Game (PREMIUM) — UPGRADED Sonic/NES style
-[
-  {n:"Coin",e:"\ud83e\ude99",f:()=>{tone(988,0.04,'square');setTimeout(()=>tone(1319,0.1,'square'),40);setTimeout(()=>tone(1568,0.06,'square',0.001),90);setTimeout(()=>tone(1319,0.04,'sine'),120)}},
-  {n:"Power\nup",e:"\u2b50",f:()=>{[523,659,784,1047,1319,1568].forEach((f,i)=>setTimeout(()=>{tone(f,0.08,'square');tone(f*1.005,0.08,'sine')},i*65))}},
-  {n:"Game\nover",e:"\ud83d\udcf4",f:()=>{[400,350,300,250,200,150].forEach((f,i)=>setTimeout(()=>tone(f,0.25,'square'),i*180))}},
-  {n:"Laser",e:"\ud83d\udd2b",f:()=>{sweep(2000,100,0.12,'sawtooth');sweep(1500,80,0.1,'square');noise(0.06,5000)}},
-  {n:"Jump",e:"\ud83e\uddb6",f:()=>{sweep(150,700,0.12,'square');setTimeout(()=>sweep(200,500,0.06,'sine'),50)}},
-  {n:"Boom",e:"\ud83d\udca3",f:()=>{impact(60,0.6);noise(0.5,800);setTimeout(()=>{impact(40,0.3);noise(0.3,400)},80)}},
-  {n:"Level\nup",e:"\ud83d\udcc8",f:()=>{[262,330,392,523,659,784,1047].forEach((f,i)=>setTimeout(()=>{tone(f,0.07,'square');tone(f*0.998,0.07,'triangle')},i*55))}},
-  {n:"Health",e:"\u2764\ufe0f",f:()=>{tone(440,0.1,'sine');setTimeout(()=>tone(660,0.1,'sine'),70);setTimeout(()=>{tone(880,0.15,'sine');tone(880,0.15,'triangle')},140)}},
-  {n:"Select",e:"\ud83d\udd18",f:()=>{tone(800,0.04,'square');setTimeout(()=>tone(1000,0.06,'square'),50)}},
-  {n:"Boss!",e:"\ud83d\udc79",f:()=>{tone(80,0.5,'square');setTimeout(()=>tone(80,0.5,'square'),600);sweep(100,40,0.9,'sawtooth');setTimeout(()=>noise(0.3,300),200)}}
-],
-// Pack 6: Animals (PREMIUM)
-[
-  {n:"Quack",e:"\ud83e\udd86",f:()=>{formant(350,'a',0.15,8,30);noise(0.05,3000)}},
-  {n:"Meow",e:"\ud83d\udc31",f:()=>{sweep(500,800,0.2,'sine');setTimeout(()=>sweep(800,400,0.3),150)}},
-  {n:"Bark",e:"\ud83d\udc36",f:()=>{formant(200,'a',0.15,5,15);noise(0.08,2000);setTimeout(()=>formant(220,'a',0.15),150)}},
-  {n:"Moo",e:"\ud83d\udc2e",f:()=>{formant(120,'o',0.8,3,8);wobble(130,0.6,2,10)}},
-  {n:"Oink",e:"\ud83d\udc37",f:()=>{formant(300,'o',0.2,12,40);noise(0.1,2000)}},
-  {n:"Bawk",e:"\ud83d\udc14",f:()=>{repeat(()=>{formant(400+Math.random()*100,'a',0.1,10,25)},4,0.12)}},
-  {n:"Trunk",e:"\ud83d\udc18",f:()=>{sweep(200,800,0.5,'sawtooth');setTimeout(()=>sweep(800,300,0.4),400)}},
-  {n:"Ooh\nooh",e:"\ud83d\udc12",f:()=>{repeat(()=>formant(350+Math.random()*50,'u',0.15,8,20),4,0.18)}},
-  {n:"Ribbit",e:"\ud83d\udc38",f:()=>{tone(150,0.1,'square');setTimeout(()=>sweep(150,300,0.1,'square'),100)}},
-  {n:"Tweet",e:"\ud83d\udc26",f:()=>{sweep(2000,3000,0.08,'sine');setTimeout(()=>sweep(2500,3500,0.06),100);setTimeout(()=>sweep(2000,3000,0.08),180)}}
-],
-// Pack 7: Music (PREMIUM)
-[
-  {n:"Drum\nhit",e:"\ud83e\udd41",f:()=>{impact(100,0.2);noise(0.1,5000)}},
-  {n:"Cymbal",e:"\ud83e\udd44",f:()=>{noise(0.8,8000,'highpass')}},
-  {n:"Bass\ndrop",e:"\ud83d\udd0a",f:()=>{sweep(200,30,0.5,'sine');impact(40,0.6)}},
-  {n:"Air\nhorn",e:"\ud83d\udce3",f:()=>{chord([349,440,523],0.8,'sawtooth')}},
-  {n:"Scratch",e:"\ud83c\udfa7",f:()=>{sweep(800,200,0.15,'sawtooth');setTimeout(()=>sweep(200,600,0.1,'sawtooth'),150)}},
-  {n:"Beat\nbox",e:"\ud83c\udfb6",f:()=>{impact(80,0.1);setTimeout(()=>noise(0.05,8000),150);setTimeout(()=>impact(80,0.1),300);setTimeout(()=>{noise(0.05,8000);tone(200,0.05,'square')},450)}},
-  {n:"Synth\nstab",e:"\ud83c\udfb9",f:()=>{chord([261,329,392],0.15,'sawtooth');chord([261,329,392],0.15,'square')}},
-  {n:"Guitar",e:"\ud83c\udfb8",f:()=>{[330,415,494,659].forEach((f,i)=>setTimeout(()=>{tone(f,0.3,'triangle');tone(f*1.002,0.3,'triangle')},i*50))}},
-  {n:"Organ",e:"\u26ea",f:()=>{chord([262,330,392,523],0.6,'sine');chord([264,332,394,525],0.6,'sine')}},
-  {n:"Trumpet",e:"\ud83c\udfba",f:()=>{formant(350,'a',0.4,5,5);tone(523,0.4,'sawtooth',0.05,0.2)}}
-],
-// Pack 8: Silly (PREMIUM)
-[
-  {n:"Fart",e:"\ud83d\udca8",f:()=>{wobble(80,0.4,20,30,'sawtooth');noise(0.3,500)}},
-  {n:"Burp",e:"\ud83e\udee2",f:()=>{wobble(100,0.3,15,40,'square');formant(120,'o',0.2,8,15)}},
-  {n:"Squeak",e:"\ud83e\uddf8",f:()=>{sweep(800,2000,0.15,'sine');setTimeout(()=>sweep(2000,800,0.15),150)}},
-  {n:"Hiccup",e:"\ud83e\ude97",f:()=>{formant(300,'i',0.05);setTimeout(()=>{impact(200,0.1);formant(350,'a',0.08)},80)}},
-  {n:"Snore",e:"\ud83d\ude34",f:()=>{wobble(80,0.5,2,20,'sawtooth');setTimeout(()=>noise(0.4,500),400)}},
-  {n:"Yawn",e:"\ud83e\udd71",f:()=>{formant(200,'a',0.4,2,3);setTimeout(()=>sweep(250,150,0.5),300)}},
-  {n:"Slurp",e:"\ud83e\udd64",f:()=>{sweep(500,2000,0.2);noise(0.15,3000);sweep(300,1500,0.15)}},
-  {n:"Gulp",e:"\ud83d\ude2c",f:()=>{sweep(600,200,0.1);impact(300,0.1);setTimeout(()=>tone(200,0.05),100)}},
-  {n:"Rasp\nberry",e:"\ud83d\ude1b",f:()=>{wobble(150,0.5,25,50,'sawtooth');noise(0.3,1500)}},
-  {n:"Wobble",e:"\ud83e\ude77",f:()=>{wobble(300,0.6,6,100,'sine');wobble(302,0.6,6.1,100,'sine')}}
-],
-// Pack 9: Weird (PREMIUM)
-[
-  {n:"Alien",e:"\ud83d\udc7d",f:()=>{wobble(600,0.8,12,200,'sine');sweep(300,1500,0.5)}},
-  {n:"Robot",e:"\ud83e\udd16",f:()=>{[200,400,300,500,250].forEach((f,i)=>setTimeout(()=>tone(f,0.08,'square'),i*100))}},
-  {n:"Glitch",e:"\ud83d\udcbb",f:()=>{repeat(()=>{tone(Math.random()*2000+200,0.03,'square');noise(0.02,Math.random()*5000)},10,0.04)}},
-  {n:"UFO",e:"\ud83d\udef8",f:()=>{wobble(800,1.0,3,200,'sine');sweep(500,1500,0.8)}},
-  {n:"Tele\nport",e:"\u2728",f:()=>{sweep(100,4000,0.3);noise(0.2,6000);setTimeout(()=>sweep(4000,100,0.3),300)}},
-  {n:"Time\nwarp",e:"\u23f0",f:()=>{sweep(200,2000,0.5);setTimeout(()=>sweep(2000,200,0.5),400);wobble(500,0.8,5,300)}},
-  {n:"Portal",e:"\ud83c\udf00",f:()=>{wobble(300,1.0,8,150,'triangle');sweep(200,1000,0.8);noise(0.5,2000)}},
-  {n:"Quantum",e:"\u269b\ufe0f",f:()=>{repeat(()=>{tone(Math.random()*1000+300,0.05,'sine');tone(Math.random()*1000+300,0.05,'triangle')},8,0.08)}},
-  {n:"Void",e:"\ud83d\udd73\ufe0f",f:()=>{sweep(800,20,1.5);noise(1.0,200);wobble(50,1.0,1,20)}},
-  {n:"Space\ndoor",e:"\ud83d\udea7",f:()=>{sweep(100,1000,0.2);noise(0.1,3000);setTimeout(()=>{chord([400,600,800],0.3);noise(0.15,5000)},200)}}
-]
+// ===== 10 CHARACTER DEFINITIONS =====
+const CHARACTERS=[
+{id:'grumpy-greg',name:'GRUMPY GREG',personality:'Always Complaining',free:true,
+ color:'#e8605a',accent:'#c62828',
+ tapPhrases:[
+  {t:"Ow! What was that for?!",s:()=>{formant(300,'a',0.2);setTimeout(()=>sweep(800,200,0.3,'sawtooth'),100)}},
+  {t:"Not again...",s:()=>{formant(250,'o',0.3);setTimeout(()=>{formant(200,'e',0.3);setTimeout(()=>formant(180,'a',0.4),200)},200)}},
+  {t:"Why me?!",s:()=>{sweep(400,250,0.4,'sawtooth');setTimeout(()=>formant(300,'i',0.5,6,20),300)}},
+  {t:"That hurts!",s:()=>{formant(280,'a',0.3,4,8);noise(0.05,4000);setTimeout(()=>sweep(350,150,0.4),200)}},
+  {t:"Ugh!",s:()=>{noise(0.08,2000);formant(150,'u',0.3);sweep(300,100,0.2,'square')}},
+  {t:"*dramatic sigh*",s:()=>{noise(0.6,800,'highpass');formant(200,'a',0.8,2,3)}},
+  {t:"I didn't sign up for this",s:()=>{formant(220,'e',0.4,3,5);setTimeout(()=>formant(200,'o',0.5,4,8),300)}},
+  {t:"Seriously?!",s:()=>{formant(350,'i',0.15);noise(0.1,3000);setTimeout(()=>sweep(600,200,0.2),80)}},
+  {t:"My back hurts!",s:()=>{formant(180,'o',0.8,6,15);sweep(400,150,0.5)}},
+  {t:"Leave me alone!",s:()=>{formant(400,'e',0.6,7,20);setTimeout(()=>formant(350,'i',0.4,8,15),300)}}
+ ],
+ shakePhrases:[
+  {t:"STOP SHAKING ME!!",s:()=>{formant(400,'a',0.8,8,30);sweep(400,1200,0.5,'sawtooth')}},
+  {t:"I'M GONNA BE SICK!",s:()=>{wobble(80,0.4,20,30,'sawtooth');noise(0.3,500)}},
+  {t:"This is ABUSE!",s:()=>{formant(350,'a',0.3);setTimeout(()=>formant(400,'a',0.5,8,25),300)}}
+ ],
+ dblPhrases:[
+  {t:"*angry growl*",s:()=>{formant(120,'a',0.3);setTimeout(()=>repeat(()=>formant(130,'a',0.2,4,8),3,0.25),200)}},
+  {t:"That's IT!",s:()=>{formant(200,'a',0.3);setTimeout(()=>{formant(250,'a',0.6,5,15);sweep(300,600,0.4,'sawtooth')},200)}}
+ ]
+},
+{id:'silly-sally',name:'SILLY SALLY',personality:'Cartoon Chaos Queen',free:true,
+ color:'#ffd60a',accent:'#f06292',
+ tapPhrases:[
+  {t:"BOING!",s:()=>{sweep(200,1000,0.12,'sine');sweep(300,900,0.14,'triangle');setTimeout(()=>sweep(600,250,0.18,'sine'),80)}},
+  {t:"*POP*",s:()=>{impact(800,0.1);tone(1200,0.05,'sine',0.001);noise(0.04,6000)}},
+  {t:"Wheeeee!",s:()=>{sweep(300,2000,0.45,'sine');sweep(350,1800,0.4,'triangle')}},
+  {t:"BONK!",s:()=>{impact(300,0.2);noise(0.12,2500);tone(200,0.1,'square',0.001)}},
+  {t:"*splat*",s:()=>{noise(0.25,4000);impact(120,0.25);sweep(600,40,0.25)}},
+  {t:"ZIP!",s:()=>{sweep(200,5000,0.08,'sawtooth');noise(0.06,8000)}},
+  {t:"Sproi-oi-oing!",s:()=>{wobble(400,0.5,35,250,'sine');sweep(300,1200,0.3)}},
+  {t:"Hee hee hee!",s:()=>{repeat(()=>formant(450+Math.random()*100,'i',0.08,10,30),6,0.12)}},
+  {t:"Wobbly!",s:()=>{wobble(200,0.3,20,100,'triangle');sweep(150,600,0.2)}},
+  {t:"La la la!",s:()=>{[523,659,784].forEach((f,i)=>setTimeout(()=>tone(f,0.12,'sine'),i*120))}}
+ ],
+ shakePhrases:[
+  {t:"WHEEEEE AGAIN!!",s:()=>{sweep(200,3000,0.6,'sine');noise(0.2,6000,'highpass')}},
+  {t:"*giggle fit*",s:()=>{repeat(()=>formant(500+Math.random()*150,'i',0.06,12,35),8,0.1)}},
+  {t:"I'M SO DIZZY!",s:()=>{wobble(300,0.6,25,200,'sine');wobble(400,0.5,20,150,'triangle')}}
+ ],
+ dblPhrases:[
+  {t:"CARTOON COMBO!",s:()=>{sweep(200,1000,0.12);setTimeout(()=>impact(300,0.2),150);setTimeout(()=>sweep(300,2000,0.3),300)}},
+  {t:"*explosion of fun*",s:()=>{noise(0.3,5000);chord([400,600,800,1000],0.3);sweep(200,1500,0.4)}}
+ ]
+},
+{id:'captain-chaos',name:'CAPTAIN CHAOS',personality:'Wildly Unpredictable',free:true,
+ color:'#46cd6e',accent:'#9c27b0',
+ tapPhrases:[
+  {t:"CHAOS REIGNS!",s:()=>{repeat(()=>{tone(Math.random()*1000+200,0.05,['sine','square','sawtooth'][Math.floor(Math.random()*3)])},6,0.08)}},
+  {t:"What just happened?!",s:()=>{sweep(100,2000,0.15);setTimeout(()=>sweep(2000,100,0.15),150)}},
+  {t:"*random noises*",s:()=>{noise(0.15,Math.random()*4000+1000);wobble(Math.random()*500+200,0.2,Math.random()*30+5,100)}},
+  {t:"SURPRISE!",s:()=>{chord([300,500,700,900],0.2);noise(0.1,5000);sweep(200,1500,0.3)}},
+  {t:"Glitch mode ON",s:()=>{repeat(()=>tone(Math.random()*2000+100,0.03,'square'),10,0.05)}},
+  {t:"Wubwubwub",s:()=>{wobble(100,0.4,20,80,'sawtooth');wobble(150,0.3,15,60,'square')}},
+  {t:"YOLO!",s:()=>{sweep(200,3000,0.1,'sawtooth');setTimeout(()=>impact(500,0.15),100);noise(0.08,6000)}},
+  {t:"Beep boop chaos",s:()=>{[200,800,400,1200,300].forEach((f,i)=>setTimeout(()=>tone(f,0.05,'square'),i*60))}},
+  {t:"*dial-up sounds*",s:()=>{wobble(800,0.5,40,400,'sine');noise(0.3,3000,'bandpass')}},
+  {t:"Entropy!",s:()=>{sweep(800,20,0.8);noise(0.5,200);wobble(50,0.6,1,20)}}
+ ],
+ shakePhrases:[
+  {t:"MAXIMUM CHAOS!!",s:()=>{repeat(()=>{noise(0.1,Math.random()*5000);tone(Math.random()*1500,0.04,'square')},8,0.06)}},
+  {t:"I LOVE SHAKING!",s:()=>{sweep(100,3000,0.3);sweep(3000,100,0.3);noise(0.2,4000)}},
+  {t:"MORE! MORE!",s:()=>{chord([200,400,600,800,1000],0.4);wobble(300,0.3,30,200)}}
+ ],
+ dblPhrases:[
+  {t:"ULTRA CHAOS COMBO!",s:()=>{repeat(()=>{sweep(Math.random()*500+100,Math.random()*2000+500,0.08);noise(0.05,Math.random()*3000)},5,0.1)}},
+  {t:"*reality breaks*",s:()=>{wobble(50,0.8,2,30,'sawtooth');sweep(800,20,1.0);noise(0.6,200)}}
+ ]
+},
+{id:'laugh-master',name:'LAUGH MASTER',personality:'Infectious Laughter',free:false,
+ color:'#f77622',accent:'#ffd60a',
+ tapPhrases:[
+  {t:"HA HA HA!",s:()=>{repeat(()=>formant(350+Math.random()*50,'a',0.08,3,5),4,0.15)}},
+  {t:"*belly laugh*",s:()=>{formant(180,'a',0.15);setTimeout(()=>formant(200,'a',0.2),200);setTimeout(()=>formant(220,'a',0.25),400);setTimeout(()=>formant(250,'a',0.3),600)}},
+  {t:"Hee hee!",s:()=>{formant(500,'i',0.1);setTimeout(()=>formant(520,'i',0.1),150);setTimeout(()=>formant(540,'i',0.12),300)}},
+  {t:"*snicker*",s:()=>{repeat(()=>formant(400+Math.random()*60,'i',0.05,8,15),5,0.1)}},
+  {t:"That's hilarious!",s:()=>{formant(300,'a',0.3,5,10);setTimeout(()=>{formant(350,'a',0.2);sweep(400,600,0.2)},300)}},
+  {t:"*wheeze laugh*",s:()=>{noise(0.4,1200,'highpass');formant(250,'e',0.5,3,4)}},
+  {t:"ROFL!",s:()=>{repeat(()=>{formant(280+Math.random()*80,'a',0.1,4,8)},6,0.12)}},
+  {t:"*evil chuckle*",s:()=>{formant(150,'o',0.3,2,3);setTimeout(()=>formant(160,'o',0.3,2,4),300);setTimeout(()=>formant(170,'a',0.4,3,5),600)}},
+  {t:"Can't stop laughing!",s:()=>{repeat(()=>formant(350+Math.random()*100,'a',0.06,5,12),8,0.1)}},
+  {t:"*giggle*",s:()=>{formant(480,'i',0.08);setTimeout(()=>formant(500,'i',0.08),120);setTimeout(()=>formant(520,'i',0.1),240)}}
+ ],
+ shakePhrases:[
+  {t:"HAHAHA STOP!!",s:()=>{repeat(()=>formant(300+Math.random()*100,'a',0.1,6,20),8,0.08)}},
+  {t:"*tears of laughter*",s:()=>{formant(200,'a',1.0,4,8);sweep(300,500,0.5)}},
+  {t:"I can't breathe!",s:()=>{noise(0.5,800,'highpass');repeat(()=>formant(350,'a',0.06,8,25),6,0.1)}}
+ ],
+ dblPhrases:[
+  {t:"MEGA LAUGH ATTACK!",s:()=>{repeat(()=>formant(250+Math.random()*200,'a',0.12,5,15),10,0.08)}},
+  {t:"*contagious laughter*",s:()=>{formant(300,'a',0.4);setTimeout(()=>formant(400,'a',0.3),250);setTimeout(()=>formant(500,'i',0.3),500);setTimeout(()=>chord([400,500,600],0.3),750)}}
+ ]
+},
+{id:'scream-queen',name:'SCREAM QUEEN',personality:'Drama & Horror',free:false,
+ color:'#9c27b0',accent:'#ff006e',
+ tapPhrases:[
+  {t:"AAAAAHHH!",s:()=>{formant(600,'a',0.5,8,30);sweep(400,1200,0.4,'sawtooth')}},
+  {t:"*shriek*",s:()=>{sweep(800,2000,0.3,'sine');noise(0.2,5000,'highpass')}},
+  {t:"NOOOOO!",s:()=>{formant(400,'o',0.6,6,20);sweep(500,200,0.5,'sawtooth')}},
+  {t:"*horror gasp*",s:()=>{noise(0.3,2000,'highpass');formant(500,'a',0.2);setTimeout(()=>formant(600,'a',0.4,8,25),200)}},
+  {t:"THE HORROR!",s:()=>{sweep(1000,200,0.8,'square');noise(0.4,1500);formant(300,'o',0.5,3,5)}},
+  {t:"*dramatic scream*",s:()=>{formant(500,'a',0.8,10,35);sweep(300,1500,0.6,'sawtooth')}},
+  {t:"HELP ME!",s:()=>{formant(450,'e',0.3,6,15);setTimeout(()=>formant(500,'i',0.4,8,20),250)}},
+  {t:"*whisper* ...behind you",s:()=>{noise(0.2,800,'highpass');formant(400,'u',0.3,2,3)}},
+  {t:"*battle cry*",s:()=>{sweep(200,1500,0.6,'sawtooth');formant(350,'a',0.5,5,15);noise(0.15,3000)}},
+  {t:"It's ALIVE!",s:()=>{chord([200,300,400],0.4);sweep(200,800,0.3);setTimeout(()=>formant(350,'a',0.4,6,12),300)}}
+ ],
+ shakePhrases:[
+  {t:"EARTHQUAKE!!",s:()=>{wobble(80,0.8,15,50,'sawtooth');noise(0.5,500);sweep(200,50,1.0)}},
+  {t:"I'M FALLING!",s:()=>{sweep(1000,100,0.8,'sine');formant(500,'a',0.6,10,30)}},
+  {t:"THE END IS NEAR!",s:()=>{chord([100,150,200],0.6);noise(0.4,300);sweep(400,100,0.8)}}
+ ],
+ dblPhrases:[
+  {t:"ULTIMATE SCREAM!",s:()=>{formant(600,'a',1.0,12,40);sweep(300,2000,0.8,'sawtooth');noise(0.3,4000)}},
+  {t:"*horror movie moment*",s:()=>{sweep(800,200,1.0,'square');setTimeout(()=>{chord([200,267,333],0.5)},500)}}
+ ]
+},
+{id:'pixel-pete',name:'PIXEL PETE',personality:'8-Bit Retro Gamer',free:false,
+ color:'#3978a8',accent:'#00ff87',
+ tapPhrases:[
+  {t:"COIN!",s:()=>{tone(988,0.06,'square');setTimeout(()=>tone(1319,0.1,'square'),60)}},
+  {t:"POWER UP!",s:()=>{[262,330,392,523].forEach((f,i)=>setTimeout(()=>tone(f,0.08,'square'),i*50))}},
+  {t:"1-UP!",s:()=>{[523,659,784,1047].forEach((f,i)=>setTimeout(()=>tone(f,0.06,'square'),i*40))}},
+  {t:"PEW PEW!",s:()=>{sweep(1000,200,0.08,'square');setTimeout(()=>sweep(1200,300,0.08,'square'),120)}},
+  {t:"GAME ON!",s:()=>{chord([262,330,392],0.2,'square');setTimeout(()=>chord([330,392,523],0.2,'square'),200)}},
+  {t:"LEVEL UP!",s:()=>{slide([262,330,392,523,659,784],0.05,'square')}},
+  {t:"COMBO x2!",s:()=>{tone(440,0.05,'square');setTimeout(()=>tone(550,0.05,'square'),80);setTimeout(()=>tone(660,0.08,'square'),160)}},
+  {t:"*8-bit jump*",s:()=>{sweep(150,600,0.1,'square')}},
+  {t:"BOSS FIGHT!",s:()=>{repeat(()=>tone(150,0.08,'square'),4,0.15);setTimeout(()=>sweep(100,400,0.2,'sawtooth'),600)}},
+  {t:"INSERT COIN",s:()=>{tone(1047,0.03,'square');setTimeout(()=>tone(784,0.06,'square'),80)}}
+ ],
+ shakePhrases:[
+  {t:"GAME OVER!",s:()=>{sweep(400,100,0.4,'square');setTimeout(()=>tone(100,0.3,'square'),300)}},
+  {t:"LAG DETECTED!",s:()=>{repeat(()=>tone(200+Math.random()*100,0.03,'square'),12,0.04)}},
+  {t:"GLITCH!",s:()=>{repeat(()=>{tone(Math.random()*2000,0.02,'square')},15,0.03)}}
+ ],
+ dblPhrases:[
+  {t:"ACHIEVEMENT UNLOCKED!",s:()=>{slide([262,330,392,523,659,784,1047],0.04,'square');setTimeout(()=>chord([523,659,784],0.3,'square'),300)}},
+  {t:"FINAL BOSS DEFEATED!",s:()=>{[523,659,784,1047,1319,1568].forEach((f,i)=>setTimeout(()=>tone(f,0.1,'square'),i*80))}}
+ ]
+},
+{id:'animal-andy',name:'ANIMAL ANDY',personality:'Zoo Impressionist',free:false,
+ color:'#8B4513',accent:'#46cd6e',
+ tapPhrases:[
+  {t:"QUACK!",s:()=>{formant(350,'a',0.15,5,10);setTimeout(()=>formant(380,'a',0.1,6,12),150)}},
+  {t:"MEOW!",s:()=>{sweep(800,400,0.3,'sine');setTimeout(()=>sweep(600,350,0.2,'sine'),200)}},
+  {t:"WOOF WOOF!",s:()=>{formant(150,'o',0.15,3,5);setTimeout(()=>formant(160,'o',0.15,3,5),200)}},
+  {t:"MOOOOO!",s:()=>{formant(120,'o',0.8,2,3);wobble(130,0.6,3,10,'sawtooth')}},
+  {t:"OINK!",s:()=>{formant(250,'o',0.1,8,15);wobble(300,0.15,12,30)}},
+  {t:"RIBBIT!",s:()=>{tone(200,0.05,'sine');setTimeout(()=>sweep(150,400,0.1,'sine'),80)}},
+  {t:"TWEET TWEET!",s:()=>{sweep(2000,3000,0.08,'sine');setTimeout(()=>sweep(2500,3500,0.06,'sine'),120);setTimeout(()=>sweep(1800,2800,0.1,'sine'),250)}},
+  {t:"*elephant trumpet*",s:()=>{sweep(200,800,0.4,'sawtooth');formant(300,'o',0.3,3,5)}},
+  {t:"ROAR!",s:()=>{formant(100,'o',0.5,2,4);noise(0.3,1000);sweep(200,80,0.4,'sawtooth')}},
+  {t:"*monkey sounds*",s:()=>{repeat(()=>formant(400+Math.random()*100,'a',0.08,8,20),5,0.12)}}
+ ],
+ shakePhrases:[
+  {t:"STAMPEDE!!",s:()=>{repeat(()=>{impact(100+Math.random()*50,0.1);noise(0.08,500)},8,0.08)}},
+  {t:"*angry bear*",s:()=>{formant(80,'o',0.8,2,5);noise(0.4,800);sweep(150,50,0.6,'sawtooth')}},
+  {t:"ZOO ESCAPE!",s:()=>{formant(200,'a',0.2);setTimeout(()=>sweep(300,1000,0.2),200);setTimeout(()=>formant(100,'o',0.3),400)}}
+ ],
+ dblPhrases:[
+  {t:"ANIMAL CHOIR!",s:()=>{formant(350,'a',0.15);setTimeout(()=>formant(120,'o',0.3),150);setTimeout(()=>sweep(2000,3000,0.1),300);setTimeout(()=>formant(250,'o',0.2),450)}},
+  {t:"*nature symphony*",s:()=>{sweep(2000,3000,0.15,'sine');formant(120,'o',0.4);setTimeout(()=>repeat(()=>formant(400,'a',0.05,8,20),4,0.1),300)}}
+ ]
+},
+{id:'dj-beats',name:'DJ BEATS',personality:'Drop the Bass',free:false,
+ color:'#3978a8',accent:'#ff006e',
+ tapPhrases:[
+  {t:"*kick drum*",s:()=>{impact(80,0.15);sweep(150,30,0.12)}},
+  {t:"*snare*",s:()=>{noise(0.12,4000);impact(200,0.08);tone(180,0.04,'square')}},
+  {t:"*hi-hat*",s:()=>{noise(0.05,8000,'highpass');noise(0.03,10000,'highpass')}},
+  {t:"BASS DROP!",s:()=>{sweep(200,30,0.6,'sine');wobble(40,0.4,5,20,'sine')}},
+  {t:"*cymbal crash*",s:()=>{noise(0.5,6000);noise(0.3,3000,'bandpass')}},
+  {t:"WUB WUB WUB",s:()=>{wobble(80,0.4,8,40,'sawtooth');wobble(120,0.3,6,30,'square')}},
+  {t:"*scratch*",s:()=>{sweep(1000,200,0.08,'sawtooth');setTimeout(()=>sweep(200,1000,0.08,'sawtooth'),100)}},
+  {t:"DROP IT!",s:()=>{chord([80,120,160],0.3,'sawtooth');sweep(800,40,0.5)}},
+  {t:"*air horn*",s:()=>{chord([349,440,523],0.4,'sawtooth');chord([370,466,554],0.3,'sawtooth')}},
+  {t:"REMIX!",s:()=>{impact(80,0.1);setTimeout(()=>noise(0.08,6000,'highpass'),100);setTimeout(()=>impact(80,0.1),200);setTimeout(()=>chord([200,300,400],0.2),300)}}
+ ],
+ shakePhrases:[
+  {t:"EARTHQUAKE BASS!!",s:()=>{wobble(30,0.8,3,15,'sine');sweep(100,20,1.0);noise(0.3,200)}},
+  {t:"*record scratch*",s:()=>{sweep(2000,100,0.3,'sawtooth');setTimeout(()=>sweep(100,2000,0.3,'sawtooth'),300)}},
+  {t:"THE BEAT DROPS!",s:()=>{impact(60,0.2);setTimeout(()=>sweep(200,20,0.8),200);wobble(40,0.6,4,20)}}
+ ],
+ dblPhrases:[
+  {t:"MEGA MIX!",s:()=>{impact(80,0.15);setTimeout(()=>noise(0.1,6000,'highpass'),100);setTimeout(()=>chord([200,300,400],0.3),200);setTimeout(()=>wobble(60,0.4,6,30),400)}},
+  {t:"FESTIVAL FINALE!",s:()=>{chord([262,330,392,523],0.4,'sawtooth');setTimeout(()=>{sweep(800,40,0.8);wobble(40,0.5,4,20)},400)}}
+ ]
+},
+{id:'baby-bubbles',name:'BABY BUBBLES',personality:'Adorable & Silly',free:false,
+ color:'#f8bbd0',accent:'#f06292',
+ tapPhrases:[
+  {t:"Goo goo!",s:()=>{formant(500,'u',0.2,4,6);setTimeout(()=>formant(480,'u',0.15,5,8),200)}},
+  {t:"*baby giggle*",s:()=>{repeat(()=>formant(550+Math.random()*50,'i',0.06,10,20),4,0.12)}},
+  {t:"Mama!",s:()=>{formant(400,'a',0.2,5,8);setTimeout(()=>formant(380,'a',0.2,5,8),250)}},
+  {t:"*raspberry*",s:()=>{wobble(100,0.2,25,50,'sawtooth');noise(0.15,1500)}},
+  {t:"Peek-a-boo!",s:()=>{formant(450,'i',0.15);setTimeout(()=>{formant(400,'a',0.2);sweep(300,600,0.15)},250)}},
+  {t:"*hiccup*",s:()=>{impact(300,0.05);setTimeout(()=>formant(400,'i',0.05),50)}},
+  {t:"*yawn*",s:()=>{formant(250,'a',0.5,2,3);sweep(300,150,0.4)}},
+  {t:"Baba!",s:()=>{formant(380,'a',0.12);setTimeout(()=>formant(400,'a',0.12),180)}},
+  {t:"*happy squeal*",s:()=>{sweep(500,1200,0.2,'sine');formant(600,'i',0.15,8,15)}},
+  {t:"Num num!",s:()=>{formant(350,'u',0.1);setTimeout(()=>formant(370,'u',0.1),150);setTimeout(()=>formant(380,'u',0.12),300)}}
+ ],
+ shakePhrases:[
+  {t:"*crying*",s:()=>{formant(500,'a',0.8,8,25);sweep(400,600,0.6,'sawtooth');sweep(500,700,0.5)}},
+  {t:"WAAAH!",s:()=>{formant(600,'a',1.0,10,30);sweep(500,800,0.8,'sawtooth')}},
+  {t:"*startled cry*",s:()=>{formant(550,'a',0.3);setTimeout(()=>formant(600,'a',0.6,8,20),200)}}
+ ],
+ dblPhrases:[
+  {t:"*tantrum*",s:()=>{repeat(()=>{formant(500+Math.random()*100,'a',0.1,8,25)},6,0.15)}},
+  {t:"*happy babble*",s:()=>{formant(400,'a',0.1);setTimeout(()=>formant(450,'i',0.1),150);setTimeout(()=>formant(500,'u',0.1),300);setTimeout(()=>formant(550,'a',0.15),450)}}
+ ]
+},
+{id:'alien-zorp',name:'ALIEN ZORP',personality:'Extraterrestrial Weirdo',free:false,
+ color:'#00f5ff',accent:'#46cd6e',
+ tapPhrases:[
+  {t:"ZORP ZORP!",s:()=>{wobble(400,0.3,15,200,'sine');wobble(600,0.2,20,150,'triangle')}},
+  {t:"*alien greeting*",s:()=>{sweep(200,1500,0.3,'sine');setTimeout(()=>sweep(1500,200,0.3,'sine'),300)}},
+  {t:"*UFO sounds*",s:()=>{wobble(300,0.5,8,150,'triangle');sweep(200,1000,0.4)}},
+  {t:"BEEP BOOP!",s:()=>{tone(800,0.06,'sine');setTimeout(()=>tone(600,0.08,'sine'),100);setTimeout(()=>tone(1000,0.06,'sine'),200)}},
+  {t:"*teleport*",s:()=>{sweep(100,3000,0.15);noise(0.1,6000,'highpass');sweep(3000,100,0.15)}},
+  {t:"Take me to your leader",s:()=>{wobble(200,0.4,5,80,'sawtooth');formant(250,'o',0.3,3,5)}},
+  {t:"*space static*",s:()=>{noise(0.3,3000,'bandpass');wobble(800,0.3,40,400,'sine')}},
+  {t:"*laser beam*",s:()=>{sweep(2000,200,0.15,'sawtooth');noise(0.08,8000,'highpass')}},
+  {t:"*time warp*",s:()=>{wobble(300,0.6,3,100,'sine');sweep(200,800,0.5);setTimeout(()=>sweep(800,200,0.5),500)}},
+  {t:"We come in peace",s:()=>{chord([300,400,500,600],0.3,'sine');wobble(350,0.3,5,50,'triangle')}}
+ ],
+ shakePhrases:[
+  {t:"WORMHOLE OPENING!!",s:()=>{sweep(800,20,1.5);noise(1.0,200);wobble(50,1.0,1,20)}},
+  {t:"INVASION MODE!",s:()=>{repeat(()=>{sweep(Math.random()*1000+500,Math.random()*500+100,0.1,'sawtooth')},6,0.12)}},
+  {t:"*alien panic*",s:()=>{repeat(()=>wobble(400+Math.random()*200,0.08,20,100,'sine'),5,0.1)}}
+ ],
+ dblPhrases:[
+  {t:"MOTHERSHIP ARRIVING!",s:()=>{sweep(20,500,1.0,'sine');wobble(50,0.8,2,30,'sawtooth');setTimeout(()=>chord([200,300,400,500],0.5),800)}},
+  {t:"*dimensional rift*",s:()=>{sweep(800,20,1.0);noise(0.6,200);wobble(50,0.8,1,20);setTimeout(()=>sweep(20,2000,0.5),500)}}
+ ]
+}
 ];
-
-const PACK_NAMES=["Complaints","Pleas","Cartoon","Laughs","Screams","Retro Game","Animals","Music","Silly","Weird"];
-const PACK_EMOJIS=["\ud83e\udd15","\ud83d\ude4f","\ud83d\udcab","\ud83d\ude02","\ud83d\ude31","\ud83c\udfae","\ud83d\udc3e","\ud83c\udfb5","\ud83e\udd2a","\ud83d\udc7d"];
-const FREE_PACKS=[0,1,2];
+const FREE_CHARS=[0,1,2];
+const charTapCounts=new Array(10).fill(0);
+try{const sv=JSON.parse(localStorage.getItem('ts_taps'));if(sv)sv.forEach((v,i)=>charTapCounts[i]=v)}catch(e){}
 
 // ===== SONIC-STYLE GAME SFX =====
 const gameSFX={
@@ -607,6 +718,133 @@ function renderChar(charIdx,canvas,scale){
   drawMonster(c,charIdx,0,0,scale,'idle');
 }
 
+// ===== CHARACTER AVATAR SYSTEM (40x50 grid, scale 3 = 120x150px) =====
+const CHAR_AVATARS=[
+// 0: Grumpy Greg — Stocky red grumpy monster
+{body:[[8,12,24,26,'#e8605a'],[10,14,20,20,'#d44a44'],[6,20,4,14,'#c62828'],[30,20,4,14,'#c62828'],
+ [10,38,8,8,'#c62828'],[22,38,8,8,'#c62828'],[10,44,10,4,'#8b2020'],[22,44,10,4,'#8b2020']],
+ face:[[8,2,24,14,'#e8605a'],[10,0,20,4,'#e8605a'],[10,4,8,6,'#fff'],[22,4,8,6,'#fff'],
+ [13,6,4,3,'#1a2744'],[25,6,4,3,'#1a2744'],[12,6,1,1,'#fff'],[24,6,1,1,'#fff'],
+ [8,2,10,2,'#c62828'],[22,2,10,2,'#c62828'],
+ [14,12,12,3,'#8b2020'],[15,12,2,1,'#fff'],[23,12,2,1,'#fff']],
+ blink:[[8,2,24,14,'#e8605a'],[10,0,20,4,'#e8605a'],[10,7,8,1,'#1a2744'],[22,7,8,1,'#1a2744'],
+ [8,2,10,2,'#c62828'],[22,2,10,2,'#c62828'],[14,12,12,3,'#8b2020']],
+ detail:[[4,22,4,6,'#e8605a'],[32,22,4,6,'#e8605a']]},
+// 1: Silly Sally — Round yellow bouncy
+{body:[[6,10,28,28,'#ffd60a'],[8,12,24,22,'#ffe066'],[4,18,4,12,'#ffd60a'],[32,18,4,12,'#ffd60a'],
+ [12,38,6,8,'#f06292'],[22,38,6,8,'#f06292'],[12,44,8,4,'#d81b60'],[22,44,8,4,'#d81b60']],
+ face:[[6,0,28,14,'#ffd60a'],[8,0,24,4,'#ffd60a'],[12,0,4,2,'#f06292'],[24,0,4,2,'#f06292'],
+ [10,4,8,7,'#fff'],[22,4,8,7,'#fff'],[13,6,3,4,'#7b1fa2'],[25,6,3,4,'#7b1fa2'],
+ [11,5,2,2,'#fff'],[23,5,2,2,'#fff'],
+ [12,13,16,4,'#f06292'],[13,13,14,1,'#fff'],[13,16,14,1,'#d81b60']],
+ blink:[[6,0,28,14,'#ffd60a'],[8,0,24,4,'#ffd60a'],[12,0,4,2,'#f06292'],[24,0,4,2,'#f06292'],
+ [10,7,8,2,'#7b1fa2'],[22,7,8,2,'#7b1fa2'],[12,13,16,4,'#f06292']],
+ detail:[[14,0,3,3,'#f06292'],[23,0,3,3,'#f06292'],[14,14,2,2,'#d81b60'],[24,14,2,2,'#d81b60']]},
+// 2: Captain Chaos — Asymmetric green/purple
+{body:[[7,12,26,24,'#46cd6e'],[9,14,22,18,'#73e88e'],[4,18,4,12,'#9c27b0'],[32,18,4,12,'#9c27b0'],
+ [11,36,7,8,'#46cd6e'],[22,36,7,8,'#9c27b0'],[11,42,8,6,'#2d8f4a'],[22,42,8,6,'#6a1b7a']],
+ face:[[7,0,26,16,'#46cd6e'],[9,0,22,4,'#46cd6e'],[6,0,6,6,'#9c27b0'],[30,0,4,4,'#9c27b0'],
+ [9,4,10,8,'#fff'],[23,4,7,6,'#fff'],[12,6,5,5,'#1a2744'],[25,5,4,4,'#1a2744'],
+ [10,5,2,2,'#fff'],[24,5,1,1,'#fff'],
+ [12,14,16,3,'#2d8f4a'],[16,16,4,3,'#ff006e']],
+ blink:[[7,0,26,16,'#46cd6e'],[9,0,22,4,'#46cd6e'],[6,0,6,6,'#9c27b0'],[30,0,4,4,'#9c27b0'],
+ [9,8,10,1,'#1a2744'],[23,7,7,1,'#1a2744'],[12,14,16,3,'#2d8f4a']],
+ detail:[[8,0,3,3,'#ce93d8'],[12,0,2,2,'#ce93d8'],[16,0,3,2,'#ce93d8'],[20,0,2,3,'#ce93d8']]},
+// 3: Laugh Master — Golden round belly laugher
+{body:[[6,10,28,28,'#f77622'],[8,14,24,20,'#ffd60a'],[4,18,4,10,'#f77622'],[32,18,4,10,'#f77622'],
+ [12,38,6,8,'#f77622'],[22,38,6,8,'#f77622'],[12,44,8,4,'#bf5f00'],[22,44,8,4,'#bf5f00']],
+ face:[[6,0,28,14,'#f77622'],[8,0,24,4,'#f77622'],[10,4,7,5,'#fff'],[23,4,7,5,'#fff'],
+ [12,5,4,3,'#1a2744'],[25,5,4,3,'#1a2744'],[11,4,1,1,'#fff'],[24,4,1,1,'#fff'],
+ [9,5,1,2,'#00f5ff'],[30,5,1,2,'#00f5ff'],
+ [12,11,16,6,'#c62828'],[13,11,14,2,'#fff'],[14,15,12,2,'#ff8a80']],
+ blink:[[6,0,28,14,'#f77622'],[8,0,24,4,'#f77622'],[10,6,7,2,'#1a2744'],[23,6,7,2,'#1a2744'],
+ [12,11,16,6,'#c62828']],
+ detail:[[10,22,20,8,'#ffd60a'],[12,24,16,4,'#ffe066']]},
+// 4: Scream Queen — Tall dark purple dramatic
+{body:[[10,14,20,24,'#9c27b0'],[12,16,16,18,'#7b1fa2'],[6,20,4,12,'#6a1b7a'],[30,20,4,12,'#6a1b7a'],
+ [14,38,5,8,'#9c27b0'],[21,38,5,8,'#9c27b0'],[14,44,6,4,'#6a1b7a'],[21,44,6,4,'#6a1b7a']],
+ face:[[10,0,20,18,'#9c27b0'],[12,0,16,4,'#9c27b0'],[12,4,6,6,'#fff'],[22,4,6,6,'#fff'],
+ [14,5,3,4,'#1a2744'],[24,5,3,4,'#1a2744'],[13,4,1,1,'#fff'],[23,4,1,1,'#fff'],
+ [6,14,4,6,'#ce93d8'],[30,14,4,6,'#ce93d8'],
+ [16,12,8,7,'#1a2744'],[17,13,6,5,'#ff006e']],
+ blink:[[10,0,20,18,'#9c27b0'],[12,0,16,4,'#9c27b0'],[12,7,6,1,'#1a2744'],[22,7,6,1,'#1a2744'],
+ [6,14,4,6,'#ce93d8'],[30,14,4,6,'#ce93d8'],[16,12,8,7,'#1a2744']],
+ detail:[[14,0,3,2,'#ce93d8'],[23,0,3,2,'#ce93d8']]},
+// 5: Pixel Pete — Blocky blue robot
+{body:[[8,14,24,22,'#3978a8'],[10,16,20,16,'#2a5a7f'],[4,18,4,12,'#8b9bb4'],[32,18,4,12,'#8b9bb4'],
+ [12,36,6,10,'#2a5a7f'],[22,36,6,10,'#2a5a7f'],[12,44,8,4,'#1a2744'],[22,44,8,4,'#1a2744']],
+ face:[[8,2,24,14,'#3978a8'],[10,0,20,4,'#3978a8'],[18,0,4,2,'#ff006e'],[19,0,2,2,'#e8605a'],
+ [10,4,20,8,'#1a2744'],[11,5,8,6,'#00ff87'],[21,5,8,6,'#00ff87'],
+ [13,6,4,4,'#46cd6e'],[23,6,4,4,'#46cd6e'],[14,7,2,2,'#fff'],[24,7,2,2,'#fff'],
+ [14,13,12,2,'#00ff87']],
+ blink:[[8,2,24,14,'#3978a8'],[10,0,20,4,'#3978a8'],[18,0,4,2,'#ff006e'],
+ [10,4,20,8,'#1a2744'],[11,7,8,1,'#00ff87'],[21,7,8,1,'#00ff87'],[14,13,12,2,'#00ff87']],
+ detail:[[6,20,2,2,'#8b9bb4'],[32,20,2,2,'#8b9bb4'],[6,28,2,2,'#8b9bb4'],[32,28,2,2,'#8b9bb4']]},
+// 6: Animal Andy — Brown with spots
+{body:[[8,12,24,24,'#8B4513'],[10,14,20,18,'#A0522D'],[4,18,4,12,'#8B4513'],[32,18,4,12,'#8B4513'],
+ [12,36,7,8,'#8B4513'],[21,36,7,8,'#8B4513'],[12,42,8,6,'#6B3410'],[21,42,8,6,'#6B3410']],
+ face:[[8,2,24,14,'#8B4513'],[10,0,20,4,'#8B4513'],[6,0,6,8,'#f77622'],[30,0,4,6,'#ce93d8'],
+ [10,4,8,6,'#fff'],[22,4,8,6,'#fff'],[13,5,4,4,'#1a2744'],[25,5,4,4,'#1a2744'],
+ [11,5,1,1,'#fff'],[23,5,1,1,'#fff'],
+ [14,12,12,3,'#6B3410'],[16,12,8,1,'#f8bbd0']],
+ blink:[[8,2,24,14,'#8B4513'],[10,0,20,4,'#8B4513'],[6,0,6,8,'#f77622'],[30,0,4,6,'#ce93d8'],
+ [10,7,8,1,'#1a2744'],[22,7,8,1,'#1a2744'],[14,12,12,3,'#6B3410']],
+ detail:[[14,18,4,3,'#46cd6e'],[24,22,3,3,'#46cd6e'],[12,26,3,2,'#46cd6e'],[26,16,3,3,'#46cd6e']]},
+// 7: DJ Beats — Cool blue with headphones
+{body:[[8,14,24,22,'#3978a8'],[10,16,20,16,'#2a5a7f'],[4,20,4,10,'#3978a8'],[32,20,4,10,'#3978a8'],
+ [12,36,6,8,'#2a5a7f'],[22,36,6,8,'#2a5a7f'],[12,44,8,4,'#1a2744'],[22,44,8,4,'#1a2744']],
+ face:[[8,2,24,16,'#3978a8'],[10,0,20,4,'#3978a8'],
+ [4,4,6,8,'#ff006e'],[30,4,6,8,'#ff006e'],[5,5,4,6,'#1a2744'],[31,5,4,6,'#1a2744'],
+ [8,4,24,2,'#1a2744'],
+ [10,6,20,4,'#1a2744'],[11,7,6,2,'#3978a8'],[23,7,6,2,'#3978a8'],
+ [16,12,8,3,'#fff'],[17,12,6,1,'#e0e0e0']],
+ blink:[[8,2,24,16,'#3978a8'],[10,0,20,4,'#3978a8'],
+ [4,4,6,8,'#ff006e'],[30,4,6,8,'#ff006e'],[5,5,4,6,'#1a2744'],[31,5,4,6,'#1a2744'],
+ [8,4,24,2,'#1a2744'],[10,6,20,4,'#1a2744'],[16,12,8,3,'#fff']],
+ detail:[[16,0,8,2,'#ff006e'],[18,0,4,4,'#1a2744']]},
+// 8: Baby Bubbles — Small round pink
+{body:[[8,14,24,22,'#f8bbd0'],[10,16,20,16,'#fce4ec'],[4,22,6,8,'#f8bbd0'],[30,22,6,8,'#f8bbd0'],
+ [14,36,5,8,'#f8bbd0'],[21,36,5,8,'#f8bbd0'],[14,42,6,6,'#f06292'],[21,42,6,6,'#f06292']],
+ face:[[8,2,24,16,'#f8bbd0'],[10,0,20,4,'#f8bbd0'],
+ [10,4,9,8,'#fff'],[21,4,9,8,'#fff'],[13,6,4,5,'#7b1fa2'],[24,6,4,5,'#7b1fa2'],
+ [11,5,2,2,'#fff'],[22,5,2,2,'#fff'],[14,7,1,1,'#fff'],[25,7,1,1,'#fff'],
+ [10,16,6,3,'#f06292'],[24,16,6,3,'#f06292'],
+ [16,14,8,4,'#ffd60a'],[17,13,6,2,'#f8bbd0']],
+ blink:[[8,2,24,16,'#f8bbd0'],[10,0,20,4,'#f8bbd0'],
+ [10,8,9,1,'#7b1fa2'],[21,8,9,1,'#7b1fa2'],
+ [10,16,6,3,'#f06292'],[24,16,6,3,'#f06292'],[16,14,8,4,'#ffd60a']],
+ detail:[[12,0,4,3,'#f06292'],[24,0,4,3,'#f06292'],[18,0,4,2,'#ce93d8']]},
+// 9: Alien Zorp — Teal/green alien with 3 eyes
+{body:[[8,14,24,22,'#00f5ff'],[10,16,20,16,'#00bcd4'],[4,20,4,10,'#46cd6e'],[32,20,4,10,'#46cd6e'],
+ [2,22,4,8,'#46cd6e'],[34,22,4,8,'#46cd6e'],
+ [14,36,5,8,'#00f5ff'],[21,36,5,8,'#00f5ff'],[14,42,6,6,'#00bcd4'],[21,42,6,6,'#00bcd4']],
+ face:[[8,2,24,16,'#00f5ff'],[10,0,20,4,'#00f5ff'],[18,0,4,4,'#ffd60a'],[19,0,2,2,'#fff'],
+ [8,4,7,6,'#fff'],[17,4,6,6,'#fff'],[25,4,7,6,'#fff'],
+ [10,5,4,4,'#1a2744'],[19,5,3,4,'#1a2744'],[27,5,4,4,'#1a2744'],
+ [9,5,1,1,'#fff'],[18,5,1,1,'#fff'],[26,5,1,1,'#fff'],
+ [14,13,12,3,'#46cd6e'],[15,13,10,1,'#00ff87']],
+ blink:[[8,2,24,16,'#00f5ff'],[10,0,20,4,'#00f5ff'],[18,0,4,4,'#ffd60a'],
+ [8,7,7,1,'#1a2744'],[17,7,6,1,'#1a2744'],[25,7,7,1,'#1a2744'],
+ [14,13,12,3,'#46cd6e']],
+ detail:[[18,0,4,2,'#ffd60a'],[19,0,2,4,'#ffe066'],[3,22,2,2,'#73e88e'],[35,22,2,2,'#73e88e']]}
+];
+
+let idleFrame=0,idleInterval=null;
+function drawCharAvatar(ctx,ci,x,y,s,frame){
+  const d=CHAR_AVATARS[ci];if(!d)return;
+  const blink=(frame%30)<2;
+  const breathe=Math.sin(frame*0.08);
+  const r=(gx,gy,gw,gh,col)=>{ctx.fillStyle=col;ctx.fillRect(Math.floor(x+gx*s),Math.floor(y+(gy+breathe)*s),Math.ceil(gw*s),Math.ceil(gh*s))};
+  // Shadow
+  ctx.fillStyle='rgba(0,0,0,0.2)';ctx.fillRect(Math.floor(x+8*s),Math.floor(y+47*s),Math.ceil(24*s),Math.ceil(3*s));
+  // Body
+  d.body.forEach(p=>r(p[0],p[1],p[2],p[3],p[4]));
+  // Face (with blink)
+  const faceData=blink?d.blink:d.face;
+  faceData.forEach(p=>r(p[0],p[1],p[2],p[3],p[4]));
+  // Details
+  if(d.detail) d.detail.forEach(p=>r(p[0],p[1],p[2],p[3],p[4]));
+}
 
 // ===== PARTICLE SYSTEM v3.0 =====
 const particles=[];
@@ -654,45 +892,111 @@ function updateDrawParticles(cx){
   gctx.globalAlpha=1;
 }
 
-// ===== UI RENDERING =====
-function renderPacks(){
+// ===== CHARACTER GALLERY + INTERACTION =====
+let charCanvases=[];
+function renderCharacterGallery(){
   const container=document.getElementById('tab-sounds');
   container.innerHTML='';
-  SOUNDS.forEach((pack,pi)=>{
-    const isFree=FREE_PACKS.includes(pi);
+  const gallery=document.createElement('div');
+  gallery.className='char-gallery';
+  charCanvases=[];
+  CHARACTERS.forEach((ch,ci)=>{
+    const isFree=FREE_CHARS.includes(ci);
     const isLocked=!isFree&&!isPremium;
-    const div=document.createElement('div');
-    div.className='pack'+(isLocked?' locked':'');
-    div.innerHTML=`
-      <div class="pack-header">
-        <span class="pack-name">${PACK_EMOJIS[pi]} ${PACK_NAMES[pi]}</span>
-        <span class="pack-badge ${isFree?'':'premium'}">${isFree?'FREE':'PREMIUM'}</span>
-      </div>
-      <div class="sounds-grid">${pack.map((s,si)=>`
-        <button class="snd-btn" data-p="${pi}" data-s="${si}" onclick="playSound(${pi},${si})" style="border-left:3px solid ${['#e8605a','#00f5ff','#ffd60a','#ff006e','#b55088','#46cd6e','#f77622','#3978a8','#9c27b0','#8b9bb4'][pi]}">
-          <span class="snd-label">${s.n}</span>
-        </button>`).join('')}
-      </div>
-      ${isLocked?`<div class="pack-lock" onclick="buyStripe()">
-        <span style="font-size:20px">\ud83d\udd12</span>
-        <span>UNLOCK $0.99</span>
-      </div>`:''}
-    `;
-    container.appendChild(div);
+    const card=document.createElement('div');
+    card.className='char-card'+(isLocked?' locked':'');
+    card.dataset.ci=ci;
+    const canvas=document.createElement('canvas');
+    canvas.className='char-avatar';canvas.width=120;canvas.height=150;
+    drawCharAvatar(canvas.getContext('2d'),ci,0,0,3,0);
+    charCanvases.push({canvas,ci});
+    const info=document.createElement('div');
+    info.innerHTML=`<div class="char-name">${ch.name}</div>
+      <div class="char-personality">${ch.personality}</div>
+      <span class="char-badge ${isFree?'free':'premium'}">${isFree?'FREE':'PREMIUM'}</span>
+      <div class="char-taps" id="taps-${ci}">TAPS: ${charTapCounts[ci]}</div>
+      <div class="char-reaction" id="react-${ci}"></div>`;
+    card.appendChild(canvas);
+    card.appendChild(info);
+    if(!isLocked){
+      let lastTap=0;
+      card.addEventListener('click',e=>{
+        const now=Date.now();
+        if(now-lastTap<350){handleCharDblTap(ci,card);lastTap=0;return}
+        lastTap=now;
+        setTimeout(()=>{if(lastTap!==0)handleCharTap(ci,card)},360);
+      });
+    }else{
+      card.addEventListener('click',()=>buyStripe());
+    }
+    gallery.appendChild(card);
   });
+  container.appendChild(gallery);
+  startIdleAnim();
 }
-
-function playSound(pi,si){
+function startIdleAnim(){
+  if(idleInterval)clearInterval(idleInterval);
+  idleInterval=setInterval(()=>{
+    idleFrame++;
+    charCanvases.forEach(({canvas,ci})=>{
+      const c=canvas.getContext('2d');c.clearRect(0,0,120,150);
+      drawCharAvatar(c,ci,0,0,3,idleFrame);
+    });
+  },400);
+}
+function stopIdleAnim(){if(idleInterval){clearInterval(idleInterval);idleInterval=null}}
+function handleCharTap(ci,card){
   initAudio();
-  const isFree=FREE_PACKS.includes(pi);
-  if(!isFree&&!isPremium){showToast('Premium sound! Unlock for $0.99');return}
-  try{SOUNDS[pi][si].f()}catch(e){}
-  if(settings.vibrate&&navigator.vibrate) navigator.vibrate(50);
+  const ch=CHARACTERS[ci];
+  const p=ch.tapPhrases[Math.floor(Math.random()*ch.tapPhrases.length)];
+  try{p.s()}catch(e){}
+  showSpeechBubble(p.t,ch.color);
+  charTapCounts[ci]++;
+  const el=document.getElementById('taps-'+ci);if(el)el.textContent='TAPS: '+charTapCounts[ci];
+  localStorage.setItem('ts_taps',JSON.stringify(charTapCounts));
+  if(settings.vibrate&&navigator.vibrate)navigator.vibrate(50);
   addShake(0.15);updateShake();
-  const btns=document.querySelectorAll(`.snd-btn[data-p="${pi}"][data-s="${si}"]`);
-  btns.forEach(b=>{b.style.background='var(--gold)';b.style.color='var(--dark)';
-    b.style.boxShadow='0 0 20px var(--gold),0 0 40px rgba(255,214,10,0.3)';
-    setTimeout(()=>{b.style.background='';b.style.color='';b.style.boxShadow=''},250)});
+  showReaction(ci,'tapped!');
+  card.style.borderColor=ch.color;card.style.boxShadow='0 0 20px '+ch.color;
+  setTimeout(()=>{card.style.borderColor='';card.style.boxShadow=''},300);
+}
+function handleCharDblTap(ci,card){
+  initAudio();
+  const ch=CHARACTERS[ci];
+  const p=ch.dblPhrases[Math.floor(Math.random()*ch.dblPhrases.length)];
+  try{p.s()}catch(e){}
+  showSpeechBubble(p.t,'#ff006e');
+  charTapCounts[ci]++;
+  const el=document.getElementById('taps-'+ci);if(el)el.textContent='TAPS: '+charTapCounts[ci];
+  localStorage.setItem('ts_taps',JSON.stringify(charTapCounts));
+  if(settings.vibrate&&navigator.vibrate)navigator.vibrate([50,30,50]);
+  addShake(0.3);updateShake();
+  showReaction(ci,'SPECIAL!');
+  burstConfetti(window.innerWidth/2,window.innerHeight/2,30);
+}
+function handleCharShake(){
+  initAudio();
+  const avail=isPremium?[...Array(10).keys()]:FREE_CHARS;
+  const ci=avail[Math.floor(Math.random()*avail.length)];
+  const ch=CHARACTERS[ci];
+  const p=ch.shakePhrases[Math.floor(Math.random()*ch.shakePhrases.length)];
+  try{p.s()}catch(e){}
+  showSpeechBubble(p.t,'#00f5ff');
+  showReaction(ci,'shaken!');
+  if(settings.vibrate&&navigator.vibrate)navigator.vibrate([80,40,80]);
+  addShake(0.4);updateShake();
+}
+function showSpeechBubble(text,bg){
+  const b=document.getElementById('speechBubble');
+  b.textContent=text;b.style.background=bg;
+  b.style.color=(bg==='#ffd60a'||bg==='#00ff87')?'#080714':'#f0f0ff';
+  b.classList.add('show');
+  clearTimeout(b._t);b._t=setTimeout(()=>b.classList.remove('show'),1800);
+}
+function showReaction(ci,text){
+  const el=document.getElementById('react-'+ci);if(!el)return;
+  el.textContent=text;el.classList.add('show');
+  setTimeout(()=>el.classList.remove('show'),1000);
 }
 
 // ===== TABS =====
@@ -703,7 +1007,8 @@ document.querySelectorAll('.tab').forEach(tab=>{
     tab.classList.add('active');
     document.getElementById('tab-'+tab.dataset.tab).classList.add('active');
     document.getElementById('gamePad').classList.toggle('visible',tab.dataset.tab==='game');
-    if(tab.dataset.tab==='game') initGame();
+    if(tab.dataset.tab==='game'){stopIdleAnim();initGame()}
+    else if(tab.dataset.tab==='sounds')startIdleAnim();
   });
 });
 
@@ -864,7 +1169,7 @@ function updatePlayer(){
       // Stretch on jump
       player.scaleX=0.7;player.scaleY=1.4;
       playSFX('jump',0.4);
-      try{SOUNDS[5][jumpSoundIdx].f()}catch(e){}
+      try{gameSFX.spring()}catch(e){}
       if(settings.vibrate&&navigator.vibrate) navigator.vibrate(30);
       wasAirborne=true;
     }else if(player.hasDoubleJump){
@@ -1431,9 +1736,9 @@ function initGame(){
   }
   const jss=document.getElementById('jumpSoundSel');
   if(jss.options.length===0){
-    SOUNDS[5].forEach((s,i)=>{
+    ['Spring','Ring','Stomp','Boost','Checkpoint'].forEach((s,i)=>{
       const o=document.createElement('option');
-      o.value=i;o.textContent=s.n.replace('\n',' ');
+      o.value=i;o.textContent=s;
       jss.appendChild(o);
     });
     jss.onchange=()=>{jumpSoundIdx=parseInt(jss.value);playSFX('menu_select',0.2)};
@@ -1545,11 +1850,7 @@ function handleShake(e){
       if(!gameRunning||gameOver) startGame();
       else input.jumpPressed=true;
     }else{
-      initAudio();
-      const availPacks=isPremium?[...Array(10).keys()]:FREE_PACKS;
-      const pi=availPacks[Math.floor(Math.random()*availPacks.length)];
-      const si=Math.floor(Math.random()*10);
-      playSound(pi,si);
+      handleCharShake();
     }
   }
 }
@@ -1611,7 +1912,7 @@ function showActivatePrompt(){
     isPremium=true;
     localStorage.setItem('taptoons_premium','true');
     localStorage.setItem('taptoons_code',code.substring(0,64));
-    renderPacks();
+    renderCharacterGallery();
     updatePremiumUI();
     showToast('Premium unlocked!');
     burstConfetti(window.innerWidth/2,window.innerHeight/2,80);
@@ -1646,7 +1947,7 @@ function showToast(msg){
 }
 
 // ===== INIT =====
-renderPacks();
+renderCharacterGallery();
 initGame();
 
 // ===== STARFIELD BACKGROUND =====

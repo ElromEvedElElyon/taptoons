@@ -1,5 +1,5 @@
-// TapToons Service Worker v3.0 Arcade Edition — Offline Support + Smart Cache
-const CACHE_NAME = 'taptoons-v6';
+// TapToon Sheik Service Worker v1.0 — Offline Support + Smart Cache
+const CACHE_NAME = 'taptoon-sheik-v1';
 const ASSETS = [
     './',
     './index.html',

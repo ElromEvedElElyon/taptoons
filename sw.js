@@ -1,10 +1,9 @@
-// TapToon Sheik Service Worker v1.0 — Offline Support + Smart Cache
-const CACHE_NAME = 'taptoon-sheik-v1';
+// TapToons Service Worker v3.0 — Offline Support + Smart Cache
+const CACHE_NAME = 'taptoons-v3';
 const ASSETS = [
     './',
     './index.html',
     './manifest.json',
-    './sounds.json',
     './icons/icon-72.png',
     './icons/icon-96.png',
     './icons/icon-128.png',
@@ -28,11 +27,10 @@ self.addEventListener('activate', (e) => {
     self.clients.claim();
 });
 
-// Network-first for HTML (always fresh), cache-first for assets
+// Network-first for HTML (always get fresh version), cache-first for assets
 self.addEventListener('fetch', (e) => {
     const url = new URL(e.request.url);
     if (url.pathname.endsWith('.html') || url.pathname === '/' || url.pathname.endsWith('/')) {
-        // Network-first for HTML — always get fresh version
         e.respondWith(
             fetch(e.request).then(response => {
                 if (response.ok) {
@@ -43,7 +41,6 @@ self.addEventListener('fetch', (e) => {
             }).catch(() => caches.match(e.request))
         );
     } else {
-        // Cache-first for static assets
         e.respondWith(
             caches.match(e.request).then(cached => cached || fetch(e.request).then(response => {
                 if (response.ok) {

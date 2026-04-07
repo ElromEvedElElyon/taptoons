@@ -1,14 +1,14 @@
 {
   "id": "/",
-  "name": "TapToon Sheik - Interactive Character Gallery",
-  "short_name": "TapToon Sheik",
-  "description": "10 interactive characters with unique personalities! Tap, shake & double-tap for reactions + arcade monster runner game. $0.99 premium.",
+  "name": "TapToons — Mine & Build",
+  "short_name": "TapToons",
+  "description": "Mine blocks, build worlds, discover diamonds. A beautiful pixel-art voxel game with smooth physics, crafting, and day-night cycle. $0.99 to unlock all.",
   "start_url": ".",
   "display": "standalone",
-  "background_color": "#1a1c2c",
-  "theme_color": "#1a1c2c",
-  "orientation": "portrait",
-  "categories": ["entertainment", "games"],
+  "background_color": "#0d0d1a",
+  "theme_color": "#1a1a2e",
+  "orientation": "any",
+  "categories": ["games", "entertainment"],
   "lang": "en",
   "icons": [
     {

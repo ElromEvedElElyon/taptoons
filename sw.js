@@ -1,5 +1,5 @@
-// TapToons Service Worker v3.0 — Offline Support + Smart Cache
-const CACHE_NAME = 'taptoons-v3';
+// PATRIOTA FIGHTER Service Worker v4.0
+const CACHE_NAME = 'patriota-fighter-v4';
 const ASSETS = [
     './',
     './index.html',
@@ -27,7 +27,6 @@ self.addEventListener('activate', (e) => {
     self.clients.claim();
 });
 
-// Network-first for HTML (always get fresh version), cache-first for assets
 self.addEventListener('fetch', (e) => {
     const url = new URL(e.request.url);
     if (url.pathname.endsWith('.html') || url.pathname === '/' || url.pathname.endsWith('/')) {

@@ -1,15 +1,15 @@
 {
   "id": "/",
-  "name": "TapToons — Mine & Build",
-  "short_name": "TapToons",
-  "description": "Mine blocks, build worlds, discover diamonds. A beautiful pixel-art voxel game with smooth physics, crafting, and day-night cycle. $0.99 to unlock all.",
+  "name": "PATRIOTA FIGHTER — Luta pela Liberdade",
+  "short_name": "Patriota Fighter",
+  "description": "Jogo de luta 2D brasileiro estilo Street Fighter! Bolsonaro, Nikolas, Milei vs Lula, Xandao e mais. Lute pela liberdade do Brasil! $0.99 para desbloquear todos.",
   "start_url": ".",
   "display": "standalone",
-  "background_color": "#0d0d1a",
-  "theme_color": "#1a1a2e",
-  "orientation": "any",
+  "background_color": "#0a0a1a",
+  "theme_color": "#0a1628",
+  "orientation": "landscape",
   "categories": ["games", "entertainment"],
-  "lang": "en",
+  "lang": "pt-BR",
   "icons": [
     {
       "src": "icons/icon-72.png",

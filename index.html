@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1,user-scalable=no">
-<meta name="description" content="PATRIOTA FIGHTER — Jogo de luta 2D brasileiro! Graficos realistas. Bolsonaro, Nikolas, Milei vs Lula, Xandao e mais.">
+<meta name="description" content="PATRIOTA FIGHTER — Jogo de luta 2D brasileiro! Graficos realistas. Herois vs Viloes da politica. Lute pela liberdade!">
 <meta name="theme-color" content="#0a0a1a">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -119,7 +119,7 @@ b.addEventListener('touchcancel',()=>{K[mk[k]||k]=0});});
 
 /* === CHARACTERS === */
 const CH=[
-{id:'bolsonaro',nm:'BOLSONARO',tt:'O Mito',side:1,
+{id:'mito',nm:'O MITO',tt:'Capitao Coragem',side:1,
 hp:1050,spd:4,jmp:-14,
 sk:'#DBA06A',sk2:'#C08850',hr:'#8A8A8A',hr2:'#666',
 o1:'#1B5E20',o2:'#2E7D32',o3:'#FFD700',sh:'#222',
@@ -127,7 +127,7 @@ hair:'side',beard:0,glass:0,bulk:1,tall:1,
 sp1N:'Arminha',sp2N:'Flexao',suN:'IMBROCHAVEL',
 sp1D:85,sp2D:105,suD:260,proj:1,
 desc:'Equilibrado. A arminha dispara energia patriota.'},
-{id:'nikolas',nm:'NIKOLAS',tt:'O Deputado',side:1,
+{id:'deputado',nm:'O DEPUTADO',tt:'Voz da Verdade',side:1,
 hp:920,spd:5.2,jmp:-15,
 sk:'#EDBE8C',sk2:'#D4A070',hr:'#1A0A00',hr2:'#2A1A10',
 o1:'#1565C0',o2:'#1976D2',o3:'#FFF',sh:'#111',
@@ -135,7 +135,7 @@ hair:'up',beard:0,glass:1,bulk:.85,tall:.96,
 sp1N:'Tweet Destruidor',sp2N:'Discurso',suN:'VIRALIZACAO',
 sp1D:72,sp2D:92,suD:225,proj:1,
 desc:'Veloz e agil. Ataques em sequencia rapida.'},
-{id:'milei',nm:'MILEI',tt:'El Leon',side:1,
+{id:'leon',nm:'EL LEON',tt:'O Libertario',side:1,
 hp:1120,spd:3.4,jmp:-12.5,
 sk:'#E0B880',sk2:'#C89860',hr:'#3A2510',hr2:'#2A1A08',
 o1:'#1A1A1A',o2:'#333',o3:'#75AADB',sh:'#111',
@@ -143,7 +143,7 @@ hair:'wild',beard:0,glass:0,bulk:1.12,tall:1.05,
 sp1N:'Motosierra',sp2N:'AFUERA!',suN:'VIVA LA LIBERTAD',
 sp1D:125,sp2D:115,suD:310,proj:0,
 desc:'Poder bruto. A motosierra nao perdoa.'},
-{id:'lula',nm:'LULA',tt:'O Corrupto',side:0,
+{id:'barba',nm:'BARBUDO',tt:'O Nove Dedos',side:0,
 hp:1000,spd:3.6,jmp:-13,
 sk:'#C89868',sk2:'#A87848',hr:'#AAA',hr2:'#888',
 o1:'#B71C1C',o2:'#C62828',o3:'#E53935',sh:'#333',
@@ -151,7 +151,7 @@ hair:'bald',beard:1,glass:0,bulk:1.1,tall:.9,
 sp1N:'Cachaca',sp2N:'Pedalada',suN:'MENSALAO',
 sp1D:78,sp2D:98,suD:240,proj:1,
 desc:'Ardiloso e traicoeiro. Cuidado com as mentiras.'},
-{id:'xandao',nm:'XANDAO',tt:'Ditador Togado',side:0,
+{id:'togado',nm:'O TOGADO',tt:'Juiz Supremo',side:0,
 hp:1220,spd:2.9,jmp:-11.5,
 sk:'#C8A070',sk2:'#A88050',hr:'#444',hr2:'#333',
 o1:'#111',o2:'#1A1A1A',o3:'#8B7355',sh:'#0A0A0A',
@@ -159,7 +159,7 @@ hair:'short',beard:0,glass:1,bulk:1.28,tall:1.12,
 sp1N:'Censura',sp2N:'Inquerito',suN:'PRISAO ILEGAL',
 sp1D:105,sp2D:135,suD:290,proj:0,
 desc:'Pesado e devastador. Cada golpe esmaga.'},
-{id:'dilma',nm:'DILMA',tt:'A Estelionataria',side:0,
+{id:'presidanta',nm:'PRESIDANTA',tt:'A Estocadora',side:0,
 hp:960,spd:3.7,jmp:-12.5,
 sk:'#DEBB90',sk2:'#C09A70',hr:'#7A3A18',hr2:'#5A2A10',
 o1:'#C62828',o2:'#D32F2F',o3:'#E53935',sh:'#444',
@@ -253,7 +253,7 @@ this.pvx=this.fc*8;this.pl=55;}
 this.sp=Math.min(100,this.sp+15);snd('special');}
 doSp2(){if(this.atk)return;this.atk=1;this.mf=0;this.hc=0;this.st='sp2';
 this.cm={su:4,ac:8,rc:10,dm:this.ch.sp2D,kb:12,hs:20,bs:10,rg:75,tp:'sp2'};
-if(this.ch.id==='milei'||this.ch.id==='xandao')this.vx=this.fc*7;
+if(this.ch.id==='leon'||this.ch.id==='togado')this.vx=this.fc*7;
 else this.vy=-9;
 this.sp=Math.min(100,this.sp+15);snd('special');}
 doSu(){if(this.sp<100||this.atk)return;this.atk=1;this.mf=0;this.hc=0;this.st='super';
@@ -319,7 +319,7 @@ const tp=f.cm.tp;
 if(tp==='lp'||tp==='hp'||tp==='clp'||tp==='jlp'){pExt=ia?1:pr<.3?pr/.3:Math.max(0,1-(pr-.3)/.7);aAng=-1.4*pExt;}
 else if(tp==='lk'||tp==='hk'||tp==='chk'||tp==='jhk'){kExt=ia?1:pr*.5;lAng=-1.3*kExt;aAng=.25;}
 else if(tp==='sp1'){aAng=-1.6;pExt=ia?1.3:0;a2Ang=.4;}
-else if(tp==='sp2'){if(c.id==='milei'||c.id==='xandao'){aAng=-.9;a2Ang=-.9;lAng=-.3;}
+else if(tp==='sp2'){if(c.id==='leon'||c.id==='togado'){aAng=-.9;a2Ang=-.9;lAng=-.3;}
 else{aAng=-1.1;lAng=-.4;bOff=-12*s;}}
 else if(tp==='super'){const pu=Math.sin(f.mf*.5)*.3;aAng=-1.6+pu;a2Ang=-1.6-pu;lAng=.15+pu;}}break;
 case'block':aAng=.7;a2Ang=.7;bOff=2*s;break;
@@ -385,11 +385,11 @@ cx.fillStyle=c.sk2;
 rrect(isBack?-armW*.9*s:0,aLen+fLen*.4,armW*1*s,7*s,3*s);
 // weapon for specials
 if(f.st==='sp1'&&!isBack){
-if(c.id==='milei'){cx.fillStyle='#888';cx.fillRect(armW*s,aLen-8*s,28*s,7*s);
+if(c.id==='leon'){cx.fillStyle='#888';cx.fillRect(armW*s,aLen-8*s,28*s,7*s);
 cx.fillStyle='#CCC';cx.fillRect(armW*s+22*s,aLen-12*s,10*s,14*s);
 // chainsaw teeth
 cx.fillStyle='#DDD';for(let i=0;i<6;i++)cx.fillRect(armW*s+2*s+i*4*s,aLen-10*s,2*s,3*s);
-}else if(c.id==='xandao'){cx.fillStyle='#6D4C41';cx.fillRect(armW*s,aLen-6*s,22*s,5*s);
+}else if(c.id==='togado'){cx.fillStyle='#6D4C41';cx.fillRect(armW*s,aLen-6*s,22*s,5*s);
 cx.fillStyle='#4E342E';rrect(armW*s+16*s,aLen-12*s,12*s,14*s,2*s);}}
 cx.restore();}
 drawArm(-trW/2-3*B*s,a2Ang,0,true);
@@ -413,17 +413,17 @@ cx.ellipse(0,hdY+hd*.4,hd*.85,hd*.5,0,.2,2.94);cx.fill();
 // === HAIR ===
 cx.fillStyle=c.hr;
 switch(c.hair){
-case'side':// Bolsonaro - side parted gray
+case'side':// side parted gray
 cx.fillStyle=c.hr;cx.beginPath();cx.ellipse(0,hdY-hd*.2,hd*1.05,hd*.7,0,3.14,0);cx.fill();
 cx.fillStyle=c.hr2;cx.fillRect(-hd,hdY-hd*.1,hd*.35,hd*.9);
 // highlights
 cx.fillStyle=lighten(c.hr,.15);cx.fillRect(-hd*.3,hdY-hd*.85,hd*.6,hd*.2);break;
-case'up':// Nikolas - styled up
+case'up':// styled up
 cx.fillStyle=c.hr;cx.beginPath();cx.ellipse(0,hdY-hd*.4,hd*.9,hd*.7,0,3.14,0);cx.fill();
 cx.fillRect(-hd*.7,hdY-hd*1.1,hd*1.4,hd*.5);
 cx.fillStyle=c.hr2;cx.fillRect(-hd*.5,hdY-hd*1.25,hd,hd*.3);
 cx.fillStyle=lighten(c.hr,.1);cx.fillRect(-hd*.2,hdY-hd*1.3,hd*.4,hd*.2);break;
-case'wild':// Milei - huge wild hair
+case'wild':// huge wild hair
 cx.fillStyle=c.hr;
 for(let i=-4;i<=4;i++){const a=i*.28,r=hd*(1.3+Math.abs(i)*.12);
 cx.beginPath();cx.ellipse(Math.sin(a)*r*.4,hdY-hd*.3+Math.cos(a)*r*-.5,
@@ -432,13 +432,13 @@ cx.fillStyle=c.hr2;cx.beginPath();cx.ellipse(0,hdY-hd*.4,hd*1.15,hd*.8,0,3.14,0)
 // sideburns
 cx.fillStyle=c.hr;cx.fillRect(-hd*1.1,hdY-hd*.1,hd*.3,hd*.7);
 cx.fillRect(hd*.8,hdY-hd*.1,hd*.3,hd*.7);break;
-case'bald':// Lula
+case'bald':// bald style
 cx.fillStyle=c.hr;cx.beginPath();cx.arc(0,hdY,hd*1.02,3.5,5.9);cx.fill();
 cx.fillStyle=c.hr2;cx.fillRect(-hd*.3,hdY-hd*.95,hd*.6,hd*.15);break;
-case'short':// Xandao
+case'short':// short cut
 cx.fillStyle=c.hr;cx.fillRect(-hd*.9,hdY-hd,hd*1.8,hd*.45);
 cx.fillStyle=c.hr2;cx.fillRect(-hd*.8,hdY-hd*.9,hd*1.6,hd*.2);break;
-case'bob':// Dilma
+case'bob':// bob cut
 cx.fillStyle=c.hr;cx.beginPath();cx.ellipse(0,hdY-hd*.15,hd*1.15,hd*1,0,3.5,6);cx.fill();
 cx.fillRect(-hd*1.15,hdY-hd*.4,hd*.35,hd*1);
 cx.fillRect(hd*.8,hdY-hd*.4,hd*.35,hd*1);
@@ -493,8 +493,8 @@ cx.shadowBlur=0;cx.restore();
 // === PROJECTILE ===
 if(f.pa){const px=f.px*s,py=f.py*s,pr=10*s;
 cx.save();
-const colors={bolsonaro:['#FFD700','#FFF8E1'],nikolas:['#1E88E5','#E3F2FD'],
-lula:['#795548','#D7CCC8'],dilma:['#E53935','#FFCDD2']};
+const colors={mito:['#FFD700','#FFF8E1'],deputado:['#1E88E5','#E3F2FD'],
+barba:['#795548','#D7CCC8'],presidanta:['#E53935','#FFCDD2']};
 const pc=colors[c.id]||['#FFF','#EEE'];
 cx.shadowColor=pc[0];cx.shadowBlur=18*s;
 const pg=cx.createRadialGradient(px,py,0,px,py,pr);

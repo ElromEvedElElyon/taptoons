@@ -10,3 +10,6 @@ activate-stripe-live.sh
 node_modules/
 check-sales.sh
 sale-notification.sh
+
+# Local Netlify folder
+.netlify

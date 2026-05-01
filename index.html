@@ -1087,7 +1087,10 @@ if(!UL()&&mx>=370&&mx<=590&&my>=476&&my<=502)window.open(STRIPE,'_blank');}});
 /* === LOOP === */
 G=new Game();
 (function loop(){G.update();G.draw();requestAnimationFrame(loop)})();
-if('serviceWorker'in navigator)navigator.serviceWorker.register('sw.js').catch(function(){});
+if('serviceWorker'in navigator){navigator.serviceWorker.getRegistrations().then(function(regs){
+regs.forEach(function(r){r.unregister()});
+if(typeof caches!=='undefined')caches.keys().then(function(k){k.forEach(function(n){caches.delete(n)})});
+})}
 </script>
 </body>
 </html>

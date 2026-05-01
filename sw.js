@@ -1,5 +1,5 @@
-// PATRIOTA FIGHTER Service Worker v4.0
-const CACHE_NAME = 'patriota-fighter-v4';
+// PATRIOTA FIGHTER Service Worker v5.0
+const CACHE_NAME = 'patriota-fighter-v5';
 const ASSETS = [
     './',
     './index.html',

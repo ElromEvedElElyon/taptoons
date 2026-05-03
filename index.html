@@ -154,7 +154,7 @@ renderer.setSize(W,H);composer.setSize(W,H);
 fxaa.uniforms.resolution.value.set(1/W,1/H);});
 
 // ===== LIGHTING (3-point MKX cinematic) =====
-scene.add(new THREE.AmbientLight(0x202030,0.35));
+scene.add(new THREE.AmbientLight(0x303050,0.5));
 
 const keyLight=new THREE.DirectionalLight(0xfff0dd,1.4);
 keyLight.position.set(-4,7,3);keyLight.castShadow=true;
@@ -181,7 +181,7 @@ return new THREE.MeshToonMaterial({color,gradientMap:toonGrad,emissive:em,emissi
 
 // ===== FLOOR =====
 const floorGeo=new THREE.PlaneGeometry(16,8);
-const floorMat=new THREE.MeshStandardMaterial({color:0x080810,roughness:0.6,metalness:0.3});
+const floorMat=new THREE.MeshStandardMaterial({color:0x1a1a2e,roughness:0.6,metalness:0.3});
 const floor=new THREE.Mesh(floorGeo,floorMat);
 floor.rotation.x=-Math.PI/2;floor.receiveShadow=true;scene.add(floor);
 const gridHelper=new THREE.GridHelper(16,32,0x111122,0x0a0a15);
@@ -190,10 +190,10 @@ gridHelper.position.y=0.001;scene.add(gridHelper);
 // ===== BACKGROUND =====
 for(let i=-3;i<=3;i+=2){
 const pGeo=new THREE.CylinderGeometry(0.15,0.15,4,8);
-const pMat=new THREE.MeshStandardMaterial({color:0x0a0a12,roughness:0.4,metalness:0.5});
+const pMat=new THREE.MeshStandardMaterial({color:0x1a1a30,roughness:0.4,metalness:0.5});
 const p=new THREE.Mesh(pGeo,pMat);p.position.set(i*1.5,2,-3);p.castShadow=true;scene.add(p);}
 const wallGeo=new THREE.PlaneGeometry(16,5);
-const wallMat=new THREE.MeshStandardMaterial({color:0x050510,roughness:0.9});
+const wallMat=new THREE.MeshStandardMaterial({color:0x141428,roughness:0.9});
 const wall=new THREE.Mesh(wallGeo,wallMat);wall.position.set(0,2.5,-3.5);scene.add(wall);
 
 // ===== 12 CHARACTERS =====
@@ -350,9 +350,9 @@ baseGLTF.animations.forEach(clip=>{this.clips[clip.name.toLowerCase()]=clip;});
 this.curAnim=null;this.curAction=null;
 this.playClip('idle');
 
-// Position and facing
+// Position and facing (rotate to side-view)
 mdl.position.set(x,0,0);
-mdl.scale.x=sc*fc;
+mdl.rotation.y=fc===1?-Math.PI/2:Math.PI/2;
 scene.add(mdl);
 this.mdl=mdl;
 
@@ -542,7 +542,7 @@ cp.needsUpdate=true;
 
 // Sync position and facing
 this.mdl.position.x=this.x;
-this.mdl.scale.x=this.baseScale*this.fc;
+this.mdl.rotation.y=this.fc===1?-Math.PI/2:Math.PI/2;
 }
 
 destroy(){

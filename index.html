@@ -96,12 +96,6 @@ background:rgba(2,2,5,0.95);backdrop-filter:blur(4px)}
 import*as THREE from'three';
 import{GLTFLoader}from'three/addons/loaders/GLTFLoader.js';
 import*as SkeletonUtils from'three/addons/utils/SkeletonUtils.js';
-import{EffectComposer}from'three/addons/postprocessing/EffectComposer.js';
-import{RenderPass}from'three/addons/postprocessing/RenderPass.js';
-import{UnrealBloomPass}from'three/addons/postprocessing/UnrealBloomPass.js';
-import{ShaderPass}from'three/addons/postprocessing/ShaderPass.js';
-import{OutputPass}from'three/addons/postprocessing/OutputPass.js';
-import{FXAAShader}from'three/addons/shaders/FXAAShader.js';
 
 // ===== PAYMENT =====
 const STRIPE='https://buy.stripe.com/6oUdR80Vu5pm3S56uV0x20c';
@@ -113,52 +107,39 @@ const UL=()=>localStorage.getItem('pf_unlocked')==='true';
 // ===== MODEL CACHE =====
 let baseGLTF=null;
 
-// ===== RENDERER =====
+// ===== RENDERER (low-memory safe — no post-processing) =====
 let W=window.innerWidth,H=window.innerHeight;
-const renderer=new THREE.WebGLRenderer({antialias:true,powerPreference:'high-performance'});
+const renderer=new THREE.WebGLRenderer({antialias:false,powerPreference:'default',
+failIfMajorPerformanceCaveat:false,preserveDrawingBuffer:false});
 renderer.setSize(W,H);renderer.setPixelRatio(1.0);
 renderer.shadowMap.enabled=true;renderer.shadowMap.type=THREE.PCFSoftShadowMap;
-renderer.toneMapping=THREE.ACESFilmicToneMapping;renderer.toneMappingExposure=0.9;
+renderer.toneMapping=THREE.ACESFilmicToneMapping;renderer.toneMappingExposure=1.0;
 renderer.outputColorSpace=THREE.SRGBColorSpace;
 document.body.prepend(renderer.domElement);
 
+// WebGL context loss recovery
+renderer.domElement.addEventListener('webglcontextlost',e=>{e.preventDefault();
+document.getElementById('load-err').style.display='block';
+document.getElementById('load-err').innerHTML='WebGL crashed — <button onclick="location.reload()" style="background:#c00;color:#fff;border:none;padding:6px 16px;border-radius:4px;cursor:pointer">RELOAD</button>';});
+renderer.domElement.addEventListener('webglcontextrestored',()=>location.reload());
+
 const scene=new THREE.Scene();
-scene.background=new THREE.Color(0x030308);
-scene.fog=new THREE.FogExp2(0x030308,0.06);
+scene.background=new THREE.Color(0x050510);
+scene.fog=new THREE.FogExp2(0x050510,0.05);
 
 const camera=new THREE.PerspectiveCamera(40,W/H,0.1,100);
 camera.position.set(0,1.8,6.5);camera.lookAt(0,1,0);
 
-// ===== POST-PROCESSING =====
-const composer=new EffectComposer(renderer);
-composer.addPass(new RenderPass(scene,camera));
-const bloom=new UnrealBloomPass(new THREE.Vector2(W,H),0.3,0.4,0.92);
-composer.addPass(bloom);
-
-const vignetteShader={
-uniforms:{tDiffuse:{value:null},darkness:{value:1.5},offset:{value:1.1}},
-vertexShader:`varying vec2 vUv;void main(){vUv=uv;gl_Position=projectionMatrix*modelViewMatrix*vec4(position,1.0);}`,
-fragmentShader:`uniform sampler2D tDiffuse;uniform float darkness;uniform float offset;varying vec2 vUv;
-void main(){vec4 c=texture2D(tDiffuse,vUv);vec2 uv=(vUv-0.5)*2.0;float v=clamp(1.0-dot(uv,uv)*darkness+offset,0.0,1.0);gl_FragColor=vec4(c.rgb*v,c.a);}`
-};
-composer.addPass(new ShaderPass(vignetteShader));
-
-const fxaa=new ShaderPass(FXAAShader);
-fxaa.uniforms.resolution.value.set(1/W,1/H);
-composer.addPass(fxaa);
-composer.addPass(new OutputPass());
-
 window.addEventListener('resize',()=>{W=innerWidth;H=innerHeight;
 camera.aspect=W/H;camera.updateProjectionMatrix();
-renderer.setSize(W,H);composer.setSize(W,H);
-fxaa.uniforms.resolution.value.set(1/W,1/H);});
+renderer.setSize(W,H);});
 
 // ===== LIGHTING (3-point MKX cinematic) =====
 scene.add(new THREE.AmbientLight(0x303050,0.5));
 
 const keyLight=new THREE.DirectionalLight(0xfff0dd,1.4);
 keyLight.position.set(-4,7,3);keyLight.castShadow=true;
-keyLight.shadow.mapSize.set(512,512);
+keyLight.shadow.mapSize.set(256,256);
 keyLight.shadow.camera.near=1;keyLight.shadow.camera.far=20;
 keyLight.shadow.camera.left=-6;keyLight.shadow.camera.right=6;
 keyLight.shadow.camera.top=5;keyLight.shadow.camera.bottom=-1;
@@ -767,7 +748,7 @@ function loop(){
 requestAnimationFrame(loop);
 const dt=Math.min(clock.getDelta(),0.05);
 
-if(hitstopF>0){hitstopF--;composer.render();return;}
+if(hitstopF>0){hitstopF--;renderer.render(scene,camera);return;}
 
 if(G.st==='FIGHT'||G.st==='FINISH'){
 uI();logDir();
@@ -802,7 +783,7 @@ if(shakeI>0){camera.position.x+=(Math.random()-0.5)*shakeI;camera.position.y+=(M
 camera.lookAt(camTarget.x,1.1,0);
 
 updSparks();
-composer.render();
+renderer.render(scene,camera);
 }
 
 function endRound(){

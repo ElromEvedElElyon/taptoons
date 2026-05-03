@@ -8,13 +8,6 @@
 *{margin:0;padding:0;box-sizing:border-box}
 html,body{width:100%;height:100%;overflow:hidden;background:#000;font-family:'Segoe UI',system-ui,sans-serif;touch-action:none;user-select:none}
 canvas{display:block}
-#loading{position:fixed;inset:0;z-index:100;background:#030308;display:flex;flex-direction:column;align-items:center;justify-content:center}
-#loading h1{color:#c00;font-size:3em;letter-spacing:5px}
-#loading h2{color:#fff;font-size:1.5em;letter-spacing:8px;margin-top:4px}
-#load-bar-bg{width:300px;height:6px;background:#111;border-radius:3px;margin-top:40px;overflow:hidden}
-#load-bar{width:0%;height:100%;background:linear-gradient(90deg,#c00,#f44);transition:width 0.3s}
-#load-text{color:#555;font-size:0.8em;margin-top:12px}
-#load-err{color:#f44;font-size:0.9em;margin-top:20px;display:none;text-align:center;max-width:400px}
 #flash{position:fixed;inset:0;background:#fff;opacity:0;pointer-events:none;z-index:90;transition:opacity 0.05s}
 #hud{position:fixed;top:0;left:0;right:0;z-index:10;pointer-events:none;padding:10px 20px}
 .hb{position:absolute;top:12px;height:24px;background:rgba(0,0,0,0.85);border:2px solid #5a4a20;overflow:hidden}
@@ -63,15 +56,6 @@ background:rgba(2,2,5,0.95);backdrop-filter:blur(4px)}
 </style>
 </head>
 <body>
-
-<div id="loading">
-<h1>PATRIOTA</h1><h2>FIGHTER</h2>
-<div class="sub" style="color:#444;margin-top:4px">3D ENGINE v9.0</div>
-<div id="load-bar-bg"><div id="load-bar"></div></div>
-<div id="load-text">Loading 3D models...</div>
-<div id="load-err"></div>
-</div>
-
 <div id="flash"></div>
 <div id="hud" style="display:none">
 <div class="hb hb-l"><div class="hf hf-l" id="hp1"></div></div>
@@ -83,7 +67,7 @@ background:rgba(2,2,5,0.95);backdrop-filter:blur(4px)}
 </div>
 <div id="ann"></div>
 <div id="combo-l"></div><div id="combo-r"></div>
-<div id="overlay" class="hidden"></div>
+<div id="overlay"><h1>PATRIOTA</h1><h2>FIGHTER</h2><div class="sub">3D CEL-SHADING ENGINE</div><div class="prompt">PRESS ANY KEY</div></div>
 <div id="mu"></div>
 
 <script type="importmap">
@@ -94,8 +78,6 @@ background:rgba(2,2,5,0.95);backdrop-filter:blur(4px)}
 </script>
 <script type="module">
 import*as THREE from'three';
-import{GLTFLoader}from'three/addons/loaders/GLTFLoader.js';
-import*as SkeletonUtils from'three/addons/utils/SkeletonUtils.js';
 import{EffectComposer}from'three/addons/postprocessing/EffectComposer.js';
 import{RenderPass}from'three/addons/postprocessing/RenderPass.js';
 import{UnrealBloomPass}from'three/addons/postprocessing/UnrealBloomPass.js';
@@ -110,13 +92,10 @@ const PAYPAL='https://www.paypal.com/paypalme/PadraoBitcoin/0.99';
 if(p.get('paid')==='true'){localStorage.setItem('pf_unlocked','true');history.replaceState(null,'',location.pathname)}})();
 const UL=()=>localStorage.getItem('pf_unlocked')==='true';
 
-// ===== MODEL CACHE =====
-let baseGLTF=null;
-
 // ===== RENDERER =====
-let W=window.innerWidth,H=window.innerHeight;
+const W=window.innerWidth,H=window.innerHeight;
 const renderer=new THREE.WebGLRenderer({antialias:true,powerPreference:'high-performance'});
-renderer.setSize(W,H);renderer.setPixelRatio(1.0);
+renderer.setSize(W,H);renderer.setPixelRatio(Math.min(devicePixelRatio,1.5));
 renderer.shadowMap.enabled=true;renderer.shadowMap.type=THREE.PCFSoftShadowMap;
 renderer.toneMapping=THREE.ACESFilmicToneMapping;renderer.toneMappingExposure=0.9;
 renderer.outputColorSpace=THREE.SRGBColorSpace;
@@ -129,10 +108,11 @@ scene.fog=new THREE.FogExp2(0x030308,0.06);
 const camera=new THREE.PerspectiveCamera(40,W/H,0.1,100);
 camera.position.set(0,1.8,6.5);camera.lookAt(0,1,0);
 
-// ===== POST-PROCESSING =====
+// ===== POST-PROCESSING (Bloom + Vignette + FXAA) =====
 const composer=new EffectComposer(renderer);
 composer.addPass(new RenderPass(scene,camera));
-const bloom=new UnrealBloomPass(new THREE.Vector2(W,H),0.3,0.4,0.92);
+
+const bloom=new UnrealBloomPass(new THREE.Vector2(W,H),0.35,0.4,0.92);
 composer.addPass(bloom);
 
 const vignetteShader={
@@ -148,17 +128,17 @@ fxaa.uniforms.resolution.value.set(1/W,1/H);
 composer.addPass(fxaa);
 composer.addPass(new OutputPass());
 
-window.addEventListener('resize',()=>{W=innerWidth;H=innerHeight;
-camera.aspect=W/H;camera.updateProjectionMatrix();
-renderer.setSize(W,H);composer.setSize(W,H);
-fxaa.uniforms.resolution.value.set(1/W,1/H);});
+window.addEventListener('resize',()=>{const w=innerWidth,h=innerHeight;
+camera.aspect=w/h;camera.updateProjectionMatrix();
+renderer.setSize(w,h);composer.setSize(w,h);
+fxaa.uniforms.resolution.value.set(1/w,1/h);});
 
 // ===== LIGHTING (3-point MKX cinematic) =====
 scene.add(new THREE.AmbientLight(0x202030,0.35));
 
 const keyLight=new THREE.DirectionalLight(0xfff0dd,1.4);
 keyLight.position.set(-4,7,3);keyLight.castShadow=true;
-keyLight.shadow.mapSize.set(512,512);
+keyLight.shadow.mapSize.set(1024,1024);
 keyLight.shadow.camera.near=1;keyLight.shadow.camera.far=20;
 keyLight.shadow.camera.left=-6;keyLight.shadow.camera.right=6;
 keyLight.shadow.camera.top=5;keyLight.shadow.camera.bottom=-1;
@@ -171,69 +151,181 @@ rimLight.position.set(3,4,-5);scene.add(rimLight);
 const fillLight=new THREE.DirectionalLight(0x332244,0.4);
 fillLight.position.set(0,2,6);scene.add(fillLight);
 
-// ===== TOON MATERIAL (Cel-Shading) =====
-const toonGrad=(()=>{const d=new Uint8Array([40,100,180,255]);
-const t=new THREE.DataTexture(d,4,1,THREE.RedFormat);
-t.minFilter=THREE.NearestFilter;t.magFilter=THREE.NearestFilter;t.needsUpdate=true;return t;})();
+// ===== TOON MATERIAL (Cel-Shading with sharp bands) =====
+function makeToon(color,emissive=0x000000,emInt=0){
+const data=new Uint8Array([40,100,180,255]);
+const gt=new THREE.DataTexture(data,4,1,THREE.RedFormat);
+gt.minFilter=THREE.NearestFilter;gt.magFilter=THREE.NearestFilter;gt.needsUpdate=true;
+return new THREE.MeshToonMaterial({color,gradientMap:gt,emissive,emissiveIntensity:emInt});
+}
 
-function makeToon(color,em=0x000000,emI=0){
-return new THREE.MeshToonMaterial({color,gradientMap:toonGrad,emissive:em,emissiveIntensity:emI});}
+// ===== OUTLINE MATERIAL (Inverted Hull) =====
+const outlineMat=new THREE.ShaderMaterial({
+uniforms:{outlineWidth:{value:0.025},outlineColor:{value:new THREE.Color(0x000000)}},
+vertexShader:`uniform float outlineWidth;void main(){vec3 p=position+normal*outlineWidth;gl_Position=projectionMatrix*modelViewMatrix*vec4(p,1.0);}`,
+fragmentShader:`uniform vec3 outlineColor;void main(){gl_FragColor=vec4(outlineColor,1.0);}`,
+side:THREE.BackSide
+});
 
-// ===== FLOOR =====
+function addOutline(mesh,width=0.025){
+const om=new THREE.Mesh(mesh.geometry,outlineMat.clone());
+om.material.uniforms.outlineWidth.value=width;
+om.scale.copy(mesh.scale);om.position.copy(mesh.position);om.rotation.copy(mesh.rotation);
+mesh.parent?mesh.parent.add(om):scene.add(om);
+return om;
+}
+
+// ===== FLOOR (reflective dark) =====
 const floorGeo=new THREE.PlaneGeometry(16,8);
 const floorMat=new THREE.MeshStandardMaterial({color:0x080810,roughness:0.6,metalness:0.3});
 const floor=new THREE.Mesh(floorGeo,floorMat);
 floor.rotation.x=-Math.PI/2;floor.receiveShadow=true;scene.add(floor);
+// Grid lines
 const gridHelper=new THREE.GridHelper(16,32,0x111122,0x0a0a15);
 gridHelper.position.y=0.001;scene.add(gridHelper);
 
-// ===== BACKGROUND =====
+// ===== BACKGROUND ELEMENTS =====
+// Pillars
 for(let i=-3;i<=3;i+=2){
 const pGeo=new THREE.CylinderGeometry(0.15,0.15,4,8);
 const pMat=new THREE.MeshStandardMaterial({color:0x0a0a12,roughness:0.4,metalness:0.5});
 const p=new THREE.Mesh(pGeo,pMat);p.position.set(i*1.5,2,-3);p.castShadow=true;scene.add(p);}
+// Back wall
 const wallGeo=new THREE.PlaneGeometry(16,5);
 const wallMat=new THREE.MeshStandardMaterial({color:0x050510,roughness:0.9});
 const wall=new THREE.Mesh(wallGeo,wallMat);wall.position.set(0,2.5,-3.5);scene.add(wall);
 
+// ===== CHARACTER BUILDER (Rounded, Detailed) =====
+function buildChar(cd){
+const g=new THREE.Group();
+const h=cd.body.height/180;const sw=cd.body.shoulder/100;
+const skin=makeToon(cd.skin);
+const top=makeToon(cd.top);
+const bot=makeToon(cd.bot);
+const boot=makeToon(cd.boot);
+const hair=makeToon(cd.hair);
+const accent=cd.accent?makeToon(cd.accent,cd.accent,0.2):null;
+
+// HEAD (capsule shape)
+const headG=new THREE.SphereGeometry(0.14*h,16,12);
+headG.applyMatrix4(new THREE.Matrix4().makeScale(1,1.18,0.95));
+const head=new THREE.Mesh(headG,skin);head.position.y=1.72*h;head.castShadow=true;g.add(head);
+addOutline(head,0.018);
+// Hair
+const hairG=new THREE.SphereGeometry(0.15*h,12,10,0,Math.PI*2,0,Math.PI*0.55);
+const hairM=new THREE.Mesh(hairG,hair);hairM.position.y=1.72*h+0.02;hairM.castShadow=true;g.add(hairM);
+// Eyes (emissive)
+const eyeG=new THREE.SphereGeometry(0.018*h,8,6);
+const eyeMat=makeToon(0xffffff,cd.eyeGlow||0x4488ff,0.6);
+[-1,1].forEach(s=>{const e=new THREE.Mesh(eyeG,eyeMat);e.position.set(s*0.045*h,1.74*h,0.11*h);g.add(e);});
+
+// NECK
+const neckG=new THREE.CylinderGeometry(0.05*h,0.065*h,0.1*h,8);
+const neck=new THREE.Mesh(neckG,skin);neck.position.y=1.6*h;g.add(neck);
+
+// CHEST (tapered box = V-shape torso)
+const chestG=new THREE.BoxGeometry(sw*h,0.5*h,0.28*h,2,2,1);
+const pos=chestG.attributes.position;
+for(let i=0;i<pos.count;i++){const y=pos.getY(i),x=pos.getX(i);
+if(y<0)pos.setX(i,x*0.7);// Taper at waist
+if(y>0.15)pos.setX(i,x*1.05);// Wider at shoulders
+}
+chestG.computeVertexNormals();
+const chest=new THREE.Mesh(chestG,top);chest.position.y=1.3*h;chest.castShadow=true;g.add(chest);
+addOutline(chest,0.02);
+
+// WAIST
+const waistG=new THREE.BoxGeometry(sw*h*0.65,0.15*h,0.24*h);
+const waist=new THREE.Mesh(waistG,bot);waist.position.y=1.0*h;waist.castShadow=true;g.add(waist);
+
+// BELT
+if(accent){const beltG=new THREE.BoxGeometry(sw*h*0.7,0.05*h,0.26*h);
+const belt=new THREE.Mesh(beltG,accent);belt.position.y=1.06*h;belt.castShadow=true;g.add(belt);}
+
+// SHOULDERS (spheres)
+[-1,1].forEach(s=>{
+const sG=new THREE.SphereGeometry(0.07*h,10,8);
+const sh=new THREE.Mesh(sG,top);sh.position.set(s*sw*h*0.52,1.5*h,0);sh.castShadow=true;g.add(sh);
+if(cd.shoulderPad){const padG=new THREE.SphereGeometry(0.09*h,10,8,0,Math.PI*2,0,Math.PI*0.55);
+const pad=new THREE.Mesh(padG,accent||top);pad.position.set(s*sw*h*0.55,1.53*h,0);pad.castShadow=true;g.add(pad);}
+});
+
+// ARMS (upper + forearm + fist)
+[-1,1].forEach(s=>{
+const uaG=new THREE.CapsuleGeometry(0.05*h,0.22*h,4,8);
+const ua=new THREE.Mesh(uaG,top);ua.position.set(s*(sw*h*0.52+0.06),1.35*h,0);ua.rotation.z=s*-0.15;ua.castShadow=true;
+g.add(ua);g.userData['ua'+s]=ua;
+const faG=new THREE.CapsuleGeometry(0.04*h,0.2*h,4,8);
+const fa=new THREE.Mesh(faG,skin);fa.position.set(s*(sw*h*0.55+0.1),1.1*h,0);fa.castShadow=true;
+g.add(fa);g.userData['fa'+s]=fa;
+const fG=new THREE.SphereGeometry(0.04*h,8,6);
+const fi=new THREE.Mesh(fG,skin);fi.position.set(s*(sw*h*0.55+0.12),0.9*h,0);fi.castShadow=true;
+g.add(fi);g.userData['fi'+s]=fi;
+});
+
+// LEGS (thigh + shin + boot)
+[-1,1].forEach(s=>{
+const thG=new THREE.CapsuleGeometry(0.065*h,0.28*h,4,8);
+const th=new THREE.Mesh(thG,bot);th.position.set(s*0.08*h,0.7*h,0);th.castShadow=true;
+g.add(th);g.userData['th'+s]=th;
+const shG=new THREE.CapsuleGeometry(0.05*h,0.25*h,4,8);
+const sh=new THREE.Mesh(shG,bot);sh.position.set(s*0.08*h,0.35*h,0);sh.castShadow=true;
+g.add(sh);g.userData['sh'+s]=sh;
+const btG=new THREE.BoxGeometry(0.08*h,0.1*h,0.14*h,1,1,1);
+const bt=new THREE.Mesh(btG,boot);bt.position.set(s*0.08*h,0.05*h,0.02);bt.castShadow=true;
+g.add(bt);g.userData['bt'+s]=bt;
+});
+
+// CAPE
+if(cd.cape){
+const cG=new THREE.PlaneGeometry(sw*h*1.1,0.6*h,3,6);
+const cM=makeToon(cd.cape);cM.side=THREE.DoubleSide;
+const cape=new THREE.Mesh(cG,cM);cape.position.set(0,1.25*h,-0.16*h);cape.castShadow=true;
+g.add(cape);g.userData.cape=cape;}
+
+// Main outline on chest
+g.userData.h=h;g.userData.sw=sw;
+return g;
+}
+
 // ===== 12 CHARACTERS =====
 const CHARS=[
-{id:'mito',name:'O MITO',hp:1000,spd:4.5,body:{height:185,shoulder:48},free:true,
-color1:0x1a3d1a,color2:0xDAA520,skinTone:0xC68642,visorCol:0xDAA520,
-specials:['Laser Patriota','Capa Dourada','Voo Soberano'],cape:true,padSize:1.2},
-{id:'deputado',name:'O DEPUTADO',hp:900,spd:5.2,body:{height:178,shoulder:40},free:true,
-color1:0x1a237e,color2:0xcc0000,skinTone:0xD4A574,visorCol:0xcc0000,
-specials:['Tablet Strike','Fake News','Filibuster'],cape:false,padSize:0},
-{id:'leon',name:'EL LEON',hp:950,spd:5.5,body:{height:188,shoulder:50},free:true,
-color1:0x2F1B0E,color2:0x8B4513,skinTone:0xC68642,visorCol:0xDAA520,
-specials:['Motosierra Fury','Anarco Tackle','Libertad Kick'],cape:false,padSize:0},
-{id:'eagle',name:'THE EAGLE',hp:1050,spd:4,body:{height:193,shoulder:52},free:true,
-color1:0x000088,color2:0xFFD700,skinTone:0xF5D0B0,visorCol:0xFFD700,
-specials:['Freedom Laser','Star Shield','Eagle Dive'],cape:true,padSize:1.3},
-{id:'general',name:'LE GENERAL',hp:1000,spd:3.8,body:{height:180,shoulder:46},free:true,
-color1:0x2F4F2F,color2:0x2F2F2F,skinTone:0xD4A574,visorCol:0x556B2F,
-specials:['Artillerie','Baton Strike','Strategie'],cape:false,padSize:1.1},
-{id:'comandante',name:'EL COMANDANTE',hp:980,spd:4.2,body:{height:183,shoulder:44},free:true,
-color1:0x3B5323,color2:0x5C4306,skinTone:0xA0704A,visorCol:0x2F4F4F,
-specials:['Charuto Bomba','Guerrilla Rush','Revolucion Kick'],cape:false,padSize:0},
-{id:'barbudo',name:'BARBUDO',hp:1020,spd:3.5,body:{height:178,shoulder:48},free:false,
-color1:0x8B0000,color2:0x333333,skinTone:0xD4A87A,visorCol:0x2F4F4F,
-specials:['Charuto Inferno','Dedo Crusher','Corrupcao Wave'],cape:false,padSize:0},
-{id:'togado',name:'O TOGADO',hp:960,spd:3.8,body:{height:186,shoulder:44},free:false,
-color1:0x080808,color2:0x4B0082,skinTone:0xD4B490,visorCol:0x4B0082,
-specials:['Martelo Justica','Toga Whip','Sentenca Final'],cape:true,padSize:0},
-{id:'presidanta',name:'PRESIDANTA',hp:920,spd:4.8,body:{height:172,shoulder:36},free:false,
-color1:0xCC0000,color2:0xDAA520,skinTone:0xD4A880,visorCol:0x8B4513,
-specials:['Estoque Fiscal','Pedalada','Power Smash'],cape:false,padSize:0},
-{id:'kanzler',name:'DER KANZLER',hp:980,spd:4.0,body:{height:178,shoulder:38},free:false,
-color1:0x2a2a2a,color2:0x1a237e,skinTone:0xF0D0B0,visorCol:0x4682B4,
-specials:['Ordnung Strike','Euro Shield','Kalt Blitz'],cape:false,padSize:0},
-{id:'oligarch',name:'THE OLIGARCH',hp:1100,spd:3.2,body:{height:192,shoulder:54},free:false,
-color1:0xB8860B,color2:0xDAA520,skinTone:0xD8B8A0,visorCol:0x2F4F4F,
-specials:['Gold Fist','Vodka Fire','Bear Hug'],cape:false,padSize:1.4},
-{id:'duce',name:'IL DUCE',hp:1000,spd:3.6,body:{height:182,shoulder:46},free:false,
-color1:0x2F4F2F,color2:0x333333,skinTone:0xC89068,visorCol:0x2F2F2F,
-specials:['Fascio Strike','March Roma','Imperial Eagle'],cape:false,padSize:1.2}
+{id:'mito',name:'O MITO',hp:1000,spd:4.5,skin:0xC68642,top:0x1a3d1a,bot:0x1a3d1a,boot:0x222222,hair:0x111111,
+accent:0xDAA520,eyeGlow:0x1565C0,cape:0xDAA520,shoulderPad:true,body:{height:185,shoulder:48},free:true,
+specials:['Laser Patriota','Capa Dourada','Voo Soberano']},
+{id:'deputado',name:'O DEPUTADO',hp:900,spd:5.2,skin:0xD4A574,top:0x1a237e,bot:0x1a237e,boot:0x111111,hair:0x111111,
+accent:0xcc0000,eyeGlow:0x333333,cape:null,shoulderPad:false,body:{height:178,shoulder:40},free:true,
+specials:['Tablet Strike','Fake News','Filibuster']},
+{id:'leon',name:'EL LEON',hp:950,spd:5.5,skin:0xC68642,top:0x2F1B0E,bot:0x1a1a1a,boot:0x3d2b1a,hair:0xDAA520,
+accent:0x8B4513,eyeGlow:0xDAA520,cape:null,shoulderPad:false,body:{height:188,shoulder:50},free:true,
+specials:['Motosierra Fury','Anarco Tackle','Libertad Kick']},
+{id:'eagle',name:'THE EAGLE',hp:1050,spd:4,skin:0xF5D0B0,top:0x000088,bot:0xCC1133,boot:0x000066,hair:0xE8C880,
+accent:0xFFD700,eyeGlow:0x4169E1,cape:0xCC1133,shoulderPad:true,body:{height:193,shoulder:52},free:true,
+specials:['Freedom Laser','Star Shield','Eagle Dive']},
+{id:'general',name:'LE GENERAL',hp:1000,spd:3.8,skin:0xD4A574,top:0x2F4F2F,bot:0x2F4F2F,boot:0x111111,hair:0x808080,
+accent:0x2F2F2F,eyeGlow:0x556B2F,cape:null,shoulderPad:true,body:{height:180,shoulder:46},free:true,
+specials:['Artillerie','Baton Strike','Strategie']},
+{id:'comandante',name:'EL COMANDANTE',hp:980,spd:4.2,skin:0xA0704A,top:0x3B5323,bot:0x3B5323,boot:0x1a0f07,hair:0x111111,
+accent:0x5C4306,eyeGlow:0x2F4F4F,cape:null,shoulderPad:false,body:{height:183,shoulder:44},free:true,
+specials:['Charuto Bomba','Guerrilla Rush','Revolucion Kick']},
+{id:'barbudo',name:'BARBUDO',hp:1020,spd:3.5,skin:0xD4A87A,top:0x8B0000,bot:0x1a1a1a,boot:0x111111,hair:0x808080,
+accent:0x333333,eyeGlow:0x2F4F4F,cape:null,shoulderPad:false,body:{height:178,shoulder:48},free:false,
+specials:['Charuto Inferno','Dedo Crusher','Corrupcao Wave']},
+{id:'togado',name:'O TOGADO',hp:960,spd:3.8,skin:0xD4B490,top:0x080808,bot:0x080808,boot:0x0a0a0a,hair:0x222222,
+accent:0x4B0082,eyeGlow:0x4B0082,cape:0x080808,shoulderPad:false,body:{height:186,shoulder:44},free:false,
+specials:['Martelo Justica','Toga Whip','Sentenca Final']},
+{id:'presidanta',name:'PRESIDANTA',hp:920,spd:4.8,skin:0xD4A880,top:0xCC0000,bot:0x1a1a1a,boot:0x880000,hair:0x6B3410,
+accent:0xDAA520,eyeGlow:0x8B4513,cape:null,shoulderPad:false,body:{height:172,shoulder:36},free:false,
+specials:['Estoque Fiscal','Pedalada','Power Smash']},
+{id:'kanzler',name:'DER KANZLER',hp:980,spd:4.0,skin:0xF0D0B0,top:0x2a2a2a,bot:0x2a2a2a,boot:0x111111,hair:0x8B4513,
+accent:0x1a237e,eyeGlow:0x4682B4,cape:null,shoulderPad:false,body:{height:178,shoulder:38},free:false,
+specials:['Ordnung Strike','Euro Shield','Kalt Blitz']},
+{id:'oligarch',name:'THE OLIGARCH',hp:1100,spd:3.2,skin:0xD8B8A0,top:0xB8860B,bot:0x111111,boot:0x222222,hair:0x111111,
+accent:0xDAA520,eyeGlow:0x2F4F4F,cape:null,shoulderPad:true,body:{height:192,shoulder:54},free:false,
+specials:['Gold Fist','Vodka Fire','Bear Hug']},
+{id:'duce',name:'IL DUCE',hp:1000,spd:3.6,skin:0xC89068,top:0x2F4F2F,bot:0x2F4F2F,boot:0x111111,hair:0x111111,
+accent:0x333333,eyeGlow:0x2F2F2F,cape:null,shoulderPad:true,body:{height:182,shoulder:46},free:false,
+specials:['Fascio Strike','March Roma','Imperial Eagle']}
 ];
 
 // ===== MOVES =====
@@ -277,8 +369,8 @@ function isQCF(fc){return chkM(['D','DR','R'],fc)||chkM(['D','R'],fc)}
 function isQCB(fc){return chkM(['D','DL','L'],fc)||chkM(['D','L'],fc)}
 function isDP(fc){return chkM(['R','D','DR'],fc)||chkM(['R','DR'],fc)}
 
-// ===== PARTICLES =====
-const sparks=[];const MAXSP=50;
+// ===== PARTICLES (3D sparks) =====
+const sparks=[];const MAXSP=80;
 for(let i=0;i<MAXSP;i++){const sg=new THREE.SphereGeometry(0.035,4,3);
 const sm=new THREE.MeshBasicMaterial({color:0xff8800,transparent:true,opacity:0});
 const m=new THREE.Mesh(sg,sm);m.visible=false;scene.add(m);
@@ -303,260 +395,67 @@ function hitstop(f){hitstopF=f;}
 function announce(t,dur=2000){const el=document.getElementById('ann');el.textContent=t;el.style.display='block';
 setTimeout(()=>el.style.display='none',dur);}
 
-// ===== FIGHTER CLASS (GLB MODEL) =====
+// ===== FIGHTER CLASS =====
 class Fighter{
-constructor(ci,x,fc){
-const c=CHARS[ci];this.ci=ci;this.c=c;this.x=x;this.y=0;this.vx=0;this.vy=0;this.fc=fc;
+constructor(ci,x,fc){const c=CHARS[ci];this.ci=ci;this.c=c;this.x=x;this.y=0;this.vx=0;this.vy=0;this.fc=fc;
 this.hp=c.hp;this.maxHp=c.hp;this.meter=0;this.maxMeter=300;
 this.state='idle';this.anim=0;this.attacking=false;this.atk=null;this.atkF=0;
 this.hit=false;this.hitT=0;this.blocking=false;this.dead=false;
 this.comboN=0;this.comboD=0;this.comboT=0;this.wins=0;this.ai=false;this.aiT=0;
-
-// Clone 3D model
-const mdl=SkeletonUtils.clone(baseGLTF.scene);
-
-// Scale to character height
-const box=new THREE.Box3().setFromObject(mdl);
-const h=box.max.y-box.min.y;
-const sc=(c.body.height/180)*(1.8/h);
-mdl.scale.setScalar(sc);
-this.baseScale=sc;
-
-// Apply cel-shading materials per character
-const bodyMat=makeToon(c.color1);
-const visorMat=makeToon(c.visorCol,c.visorCol,0.3);
-const skinMat=makeToon(c.skinTone);
-mdl.traverse(child=>{
-if(child.isMesh){
-if(child.name==='vanguard_visor')child.material=visorMat;
-else child.material=bodyMat;
-child.castShadow=true;child.receiveShadow=true;
-}});
-
-// Find bones
-this.bones={};
-mdl.traverse(child=>{if(child.isBone){
-const nm=child.name.replace('mixamorig:','');
-this.bones[nm]=child;}});
-
-// Store initial bone rotations (from idle pose)
-this.boneRest={};
-for(const[nm,bone]of Object.entries(this.bones)){
-this.boneRest[nm]={x:bone.rotation.x,y:bone.rotation.y,z:bone.rotation.z};}
-
-// Animation mixer
-this.mixer=new THREE.AnimationMixer(mdl);
-this.clips={};
-baseGLTF.animations.forEach(clip=>{this.clips[clip.name.toLowerCase()]=clip;});
-this.curAnim=null;this.curAction=null;
-this.playClip('idle');
-
-// Position and facing
-mdl.position.set(x,0,0);
-mdl.scale.x=sc*fc;
-scene.add(mdl);
-this.mdl=mdl;
-
-// Bone override accumulators for smooth combat animation
-this.boneAcc={};
-
-// Cape (optional, attached to Spine2 bone)
-this.capeObj=null;
-if(c.cape&&this.bones.Spine2){
-const cG=new THREE.PlaneGeometry(0.4*sc,0.5*sc,2,5);
-const cM=makeToon(c.color2);cM.side=THREE.DoubleSide;
-const cape=new THREE.Mesh(cG,cM);
-cape.position.set(0,-0.1,-0.15);
-cape.castShadow=true;
-this.bones.Spine2.add(cape);
-this.capeObj=cape;
+this.mdl=buildChar(c);this.mdl.position.set(x,0,0);this.mdl.scale.x=fc;scene.add(this.mdl);}
+destroy(){scene.remove(this.mdl);}
 }
 
-// Shoulder pads (optional)
-if(c.padSize>0&&this.bones.LeftShoulder&&this.bones.RightShoulder){
-const padGeo=new THREE.SphereGeometry(0.06*c.padSize,8,6,0,Math.PI*2,0,Math.PI*0.6);
-const padMat=makeToon(c.color2,c.color2,0.15);
-const lPad=new THREE.Mesh(padGeo,padMat);lPad.castShadow=true;
-const rPad=new THREE.Mesh(padGeo,padMat);rPad.castShadow=true;
-this.bones.LeftShoulder.add(lPad);
-this.bones.RightShoulder.add(rPad);
+// ===== ANIMATION =====
+function animF(f,dt){
+f.anim+=dt*3;const t=f.anim;const ud=f.mdl.userData;const h=ud.h;
+const resetLimb=(key,rx=0,ry=0,rz=0)=>{const o=ud[key];if(o){o.rotation.x+=(rx-o.rotation.x)*0.15;o.rotation.z+=(rz-o.rotation.z)*0.15;}};
+
+if(f.state==='idle'){
+f.mdl.position.y=Math.sin(t*2.5)*0.008;
+resetLimb('ua1',0.35,0,-0.2);resetLimb('ua-1',0.35,0,0.2);
+resetLimb('th1',Math.sin(t)*0.03);resetLimb('th-1',-Math.sin(t)*0.03);
+}else if(f.state==='walk'){
+const s=Math.sin(t*7);
+resetLimb('th1',s*0.45);resetLimb('th-1',-s*0.45);
+resetLimb('ua1',-s*0.3);resetLimb('ua-1',s*0.3);
+}else if(f.state==='attack'){
+const mv=MV[f.atk];if(!mv)return;
+const p=f.atkF/(mv.s+mv.a+mv.r);const sw=Math.sin(p*Math.PI);
+if(f.atk==='lp'||f.atk==='hp'){
+resetLimb('ua1',-1.4*sw,0,-0.3);
+if(ud['fi1'])ud['fi1'].position.z=0.35*sw*h;
+}else if(f.atk==='lk'||f.atk==='hk'){
+resetLimb('th1',-1.2*sw);
+if(ud['sh1'])ud['sh1'].position.z=0.2*sw*h;
+}else if(f.atk==='sweep'){
+resetLimb('th1',-0.3,0,-0.9*sw);f.mdl.position.y=-0.15*sw;
+}else{// specials/super
+resetLimb('ua1',-1.8*sw,0,-0.5*sw);resetLimb('ua-1',-1.2*sw,0,0.3*sw);
 }
+}else if(f.state==='hit'){
+f.mdl.position.y=-0.03;f.mdl.rotation.z=0.08*f.fc;
+}else if(f.state==='block'){
+resetLimb('ua1',0.9,0,-0.7);resetLimb('ua-1',0.9,0,0.7);
+}else if(f.state==='ko'){
+f.mdl.rotation.z+=((-Math.PI/6*f.fc)-f.mdl.rotation.z)*0.05;
+f.mdl.position.y=Math.max(f.mdl.position.y-0.008,-0.2);
 }
 
-playClip(name){
-if(this.curAnim===name)return;
-const clip=this.clips[name];
-if(!clip)return;
-const act=this.mixer.clipAction(clip);
-act.setLoop(THREE.LoopRepeat);
-if(this.curAction)this.curAction.fadeOut(0.15);
-act.reset().fadeIn(0.15).play();
-this.curAction=act;this.curAnim=name;
-}
-
-// Additive bone override for combat
-boneAdd(name,rx,ry,rz,str=0.3){
-const bone=this.bones[name];
-if(!bone)return;
-if(!this.boneAcc[name])this.boneAcc[name]={x:0,y:0,z:0};
-const a=this.boneAcc[name];
-a.x+=(rx-a.x)*str;a.y+=(ry-a.y)*str;a.z+=(rz-a.z)*str;
-}
-
-applyBoneOverrides(){
-for(const[name,off]of Object.entries(this.boneAcc)){
-const bone=this.bones[name];
-if(!bone)continue;
-bone.rotation.x+=off.x;bone.rotation.y+=off.y;bone.rotation.z+=off.z;
-}}
-
-resetBoneAcc(){
-for(const a of Object.values(this.boneAcc)){a.x*=0.8;a.y*=0.8;a.z*=0.8;}}
-
-updateAnim(dt){
-this.anim+=dt*3;
-const t=this.anim;
-
-// Update base animation
-this.mixer.update(dt);
-
-if(this.state==='idle'){
-this.playClip('idle');
-this.resetBoneAcc();
-}
-else if(this.state==='walk'){
-this.playClip('walk');
-this.resetBoneAcc();
-}
-else if(this.state==='attack'){
-this.playClip('idle');
-const mv=MV[this.atk];if(!mv)return;
-const total=mv.s+mv.a+mv.r;
-const p=this.atkF/total;
-const sw=Math.sin(p*Math.PI);
-const pk=p<0.5?sw*1.5:sw;
-
-if(this.atk==='lp'||this.atk==='hp'){
-const pw=this.atk==='hp'?1.4:1.0;
-this.boneAdd('RightArm',-1.5*pk*pw,0,-0.2*pk,0.35);
-this.boneAdd('RightForeArm',-0.9*pk*pw,0,0,0.35);
-this.boneAdd('Spine1',0,-0.2*pk,0,0.2);
-this.boneAdd('LeftArm',-0.6,0,0.3,0.15);
-this.boneAdd('LeftForeArm',-0.8,0,0,0.15);
-}
-else if(this.atk==='lk'||this.atk==='hk'){
-const pw=this.atk==='hk'?1.4:1.0;
-this.boneAdd('RightUpLeg',-1.3*pk*pw,0,0,0.35);
-this.boneAdd('RightLeg',0.7*pk*pw,0,0,0.35);
-this.boneAdd('Hips',0,-0.25*pk,0,0.2);
-this.boneAdd('Spine',0,0.15*pk,0,0.15);
-this.boneAdd('LeftArm',-0.4,0,0.2,0.12);
-this.boneAdd('RightArm',-0.4,0,-0.2,0.12);
-}
-else if(this.atk==='sweep'){
-this.boneAdd('Hips',0.3*pk,0,-0.2*pk,0.3);
-this.boneAdd('RightUpLeg',-0.3*pk,0,-1.2*pk,0.3);
-this.boneAdd('RightLeg',0.4*pk,0,0,0.3);
-this.boneAdd('Spine',-0.2*pk,0,0.1*pk,0.2);
-}
-else if(this.atk==='sp1'){
-// Energy double punch
-this.boneAdd('RightArm',-1.8*pk,0,-0.3*pk,0.4);
-this.boneAdd('LeftArm',-1.5*pk,0,0.3*pk,0.35);
-this.boneAdd('RightForeArm',-1.0*pk,0,0,0.35);
-this.boneAdd('LeftForeArm',-0.8*pk,0,0,0.3);
-this.boneAdd('Spine1',-0.25*pk,0,0,0.25);
-}
-else if(this.atk==='sp2'){
-// Spinning kick
-this.boneAdd('Hips',0,Math.PI*2*p,0,0.45);
-this.boneAdd('RightUpLeg',-1.5*pk,0,0,0.35);
-this.boneAdd('RightLeg',0.8*pk,0,0,0.3);
-this.boneAdd('Spine',0,-Math.PI*0.3*p,0,0.2);
-}
-else if(this.atk==='sp3'){
-// Uppercut
-this.boneAdd('RightArm',-2.2*pk,0,-0.4*pk,0.4);
-this.boneAdd('RightForeArm',-1.4*pk,0,0,0.4);
-this.boneAdd('Spine',-0.35*pk,0,0,0.25);
-this.boneAdd('Hips',-0.15*pk,0,0,0.2);
-this.boneAdd('LeftUpLeg',0.15*pk,0,0,0.15);
-this.boneAdd('RightUpLeg',0.15*pk,0,0,0.15);
-}
-else if(this.atk==='super'){
-// Multi-phase super
-const phase=p*3;
-if(phase<1){
-// Wind up
-this.boneAdd('Spine',0.35,0,0,0.25);
-this.boneAdd('RightArm',0.6,0,-0.3,0.2);
-this.boneAdd('LeftArm',0.6,0,0.3,0.2);
-}else{
-// Unleash
-this.boneAdd('RightArm',-2.0*pk,0,-0.5*pk,0.45);
-this.boneAdd('LeftArm',-1.6*pk,0,0.4*pk,0.4);
-this.boneAdd('RightForeArm',-1.2*pk,0,0,0.4);
-this.boneAdd('LeftForeArm',-1.0*pk,0,0,0.35);
-this.boneAdd('Spine',-0.45*pk,0,0,0.3);
-this.boneAdd('RightUpLeg',-0.4*pk,0,0,0.2);
-}
-}
-}
-else if(this.state==='block'){
-this.playClip('idle');
-this.boneAdd('RightArm',-1.1,0,-0.6,0.25);
-this.boneAdd('RightForeArm',-1.6,0,0,0.25);
-this.boneAdd('LeftArm',-1.1,0,0.6,0.25);
-this.boneAdd('LeftForeArm',-1.6,0,0,0.25);
-this.boneAdd('Spine',0.12,0,0,0.15);
-}
-else if(this.state==='hit'){
-this.playClip('idle');
-this.boneAdd('Spine',0.45,0,0,0.35);
-this.boneAdd('Spine1',0.2,0,0,0.3);
-this.boneAdd('Head',0.35,0,0,0.3);
-this.boneAdd('RightArm',0.2,0,0.4,0.2);
-this.boneAdd('LeftArm',0.2,0,-0.4,0.2);
-}
-else if(this.state==='ko'){
-this.playClip('idle');
-this.boneAdd('Spine',0.9,0,0,0.04);
-this.boneAdd('Spine1',0.6,0,0,0.04);
-this.boneAdd('Head',0.7,0,0,0.05);
-this.boneAdd('RightArm',0.3,0,0.9,0.03);
-this.boneAdd('LeftArm',0.3,0,-0.9,0.03);
-this.boneAdd('RightUpLeg',0.3,0,0.2,0.02);
-this.boneAdd('LeftUpLeg',0.3,0,-0.2,0.02);
-this.mdl.position.y=Math.max(this.mdl.position.y-0.006,-0.25);
-}
-
-// Apply accumulated bone overrides on top of mixer
-this.applyBoneOverrides();
+if(f.state!=='hit'&&f.state!=='ko'){f.mdl.rotation.z*=0.85;}
+f.mdl.position.x=f.x;f.mdl.scale.x=f.fc;
 
 // Cape physics
-if(this.capeObj){
-const cp=this.capeObj.geometry.attributes.position;
+if(ud.cape){const cp=ud.cape.geometry.attributes.position;
 for(let i=0;i<cp.count;i++){const y=cp.getY(i);
-if(y<-0.05)cp.setZ(i,Math.sin(t*2.5+i*0.5)*0.04-0.03);}
-cp.needsUpdate=true;
-}
-
-// Sync position and facing
-this.mdl.position.x=this.x;
-this.mdl.scale.x=this.baseScale*this.fc;
-}
-
-destroy(){
-this.mixer.stopAllAction();
-scene.remove(this.mdl);
-this.mdl.traverse(child=>{if(child.isMesh){child.geometry?.dispose();child.material?.dispose();}});
-}
+if(y<-0.1)cp.setZ(i,Math.sin(t*2+i*0.4)*0.04-0.03);}
+ud.cape.geometry.attributes.position.needsUpdate=true;}
 }
 
 // ===== AI =====
 function aiUpd(f,o){
 f.aiT--;if(f.aiT>0)return;
-const dx=o.x-f.x;const d=Math.abs(dx);f.fc=dx>0?1:-1;
+const dx=o.x-f.x;const d=Math.abs(dx);f.fc=dx>0?1:-1;f.mdl.scale.x=f.fc;
 if(o.attacking&&d<1.5&&Math.random()<0.35){f.blocking=true;f.state='block';f.aiT=10;return;}
 f.blocking=false;
 if(d>2.5){f.x+=Math.sign(dx)*f.c.spd*0.014;f.state='walk';f.aiT=2;}
@@ -573,7 +472,6 @@ f.attacking=true;f.atk=m;f.atkF=0;f.state='attack';snd(m==='lp'||m==='lk'?'hit_l
 function updF(f,o){
 f.anim+=0.016;
 if(f.y>0||f.vy!==0){f.vy-=0.02;f.y+=f.vy;if(f.y<=0){f.y=0;f.vy=0;}}
-f.mdl.position.y=Math.max(f.mdl.position.y,0)+f.y;
 f.x=Math.max(-4.5,Math.min(4.5,f.x));
 if(f.attacking){const mv=MV[f.atk];if(!mv){f.attacking=false;return;}
 f.atkF++;
@@ -591,6 +489,7 @@ const mv=MV[a.atk];const dm=mv.d;
 d.hp=Math.max(0,d.hp-dm);d.hit=true;d.hitT=10;d.state='hit';d.x+=a.fc*mv.k;
 a.meter=Math.min(a.maxMeter,a.meter+dm*0.3);d.meter=Math.min(d.maxMeter,d.meter+dm*0.15);
 a.comboN++;a.comboD+=dm;a.comboT=40;
+// VFX
 const hx=(a.x+d.x)/2;
 emitSpark(hx,1.2+Math.random()*0.3,0.15,10,0xff8800,0.18);
 if(dm>=80){emitSpark(hx,1.0,0.1,5,0x880000,0.12);screenFlash();camShake(dm/80*0.08);hitstop(dm>=150?8:4);}
@@ -599,7 +498,7 @@ if(dm>=150)snd('super');
 }
 
 // ===== GAME STATE =====
-const G={st:'LOADING',p1:null,p2:null,round:1,maxR:2,timer:99,mode:'versus',
+const G={st:'TITLE',p1:null,p2:null,round:1,maxR:2,timer:99,mode:'versus',
 sel1:0,sel2:1,side:0,menuI:0,arcW:0};
 
 function handleMenuKey(k){
@@ -632,14 +531,10 @@ let h='<h2 style="color:#c00;font-size:1.1em;letter-spacing:3px">SELECT FIGHTER<
 CHARS.forEach((c,i)=>{
 const locked=!c.free&&!UL();
 const s1=i===G.sel1?'s1':'';const s2=i===G.sel2&&G.side===1?'s2':'';
-const col='#'+c.color1.toString(16).padStart(6,'0');
 h+=`<div class="gc ${s1} ${s2} ${locked?'locked':''}" onclick="window.pickC(${i})">
-<div class="dot" style="background:${col}"></div>
+<div class="dot" style="background:#${c.skin.toString(16).padStart(6,'0')}"></div>
 <div class="cn">${locked?'$0.99':c.name}</div></div>`;});
 h+=`</div><div style="color:#555;font-size:0.8em;margin-top:10px">${G.side===0?'P1 SELECT':'P2 SELECT'}</div>`;
-if(!UL())h+=`<div style="margin-top:15px;display:flex;gap:10px;justify-content:center">
-<a href="${STRIPE}" style="color:#48f;font-size:0.75em;text-decoration:none;border:1px solid #48f;padding:4px 12px;border-radius:4px">UNLOCK ALL $0.99</a>
-<a href="${PAYPAL}" style="color:#4a4;font-size:0.75em;text-decoration:none;border:1px solid #4a4;padding:4px 12px;border-radius:4px">PayPal $0.99</a></div>`;
 ov.innerHTML=h;}
 
 window.pickC=function(i){
@@ -650,18 +545,18 @@ else{G.sel2=i;startGame();snd('fight');}};
 function startGame(){
 document.getElementById('overlay').classList.add('hidden');
 document.getElementById('hud').style.display='block';
-if(G.p1)G.p1.destroy();if(G.p2)G.p2.destroy();
+if(G.p1){G.p1.destroy();}if(G.p2){G.p2.destroy();}
 G.p1=new Fighter(G.sel1,-2,1);G.p2=new Fighter(G.sel2,2,-1);
 if(G.mode!=='versus')G.p2.ai=true;
 G.round=1;G.timer=99;G.st='FIGHT';
 document.getElementById('n1').textContent=G.p1.c.name;
 document.getElementById('n2').textContent=G.p2.c.name;
-announce('ROUND 1 \u2014 FIGHT!',2000);
+announce('ROUND 1 — FIGHT!',2000);
 }
 
 // ===== PLAYER INPUT =====
 function pInput(f,o){
-const dx=o.x-f.x;f.fc=dx>0?1:-1;
+const dx=o.x-f.x;f.fc=dx>0?1:-1;f.mdl.scale.x=f.fc;
 f.blocking=!!I.bl;if(f.blocking){f.state='block';return;}
 if(!f.attacking&&!f.hit){
 if(jp('u')&&f.y<=0.01){f.vy=0.25;}
@@ -669,6 +564,7 @@ if(I.l){f.x-=f.c.spd*0.014;f.state='walk';}
 else if(I.r){f.x+=f.c.spd*0.014;f.state='walk';}
 else f.state='idle';}
 if(f.attacking)return;
+// Specials
 if(f.meter>=f.maxMeter&&isQCF(f.fc)&&(jp('lp')||jp('hp'))){doAtk(f,'super');f.meter=0;return;}
 if(isQCF(f.fc)&&(jp('lp')||jp('hp'))){doAtk(f,'sp1');return;}
 if(isQCB(f.fc)&&(jp('lk')||jp('hk'))){doAtk(f,'sp2');return;}
@@ -677,7 +573,7 @@ if(jp('lp'))doAtk(f,'lp');else if(jp('hp'))doAtk(f,'hp');
 else if(jp('lk'))doAtk(f,'lk');else if(jp('hk'))doAtk(f,'hk');
 }
 
-// ===== HUD =====
+// ===== HUD UPDATE =====
 function updHUD(){
 if(!G.p1||!G.p2)return;
 const p1=Math.max(0,G.p1.hp/G.p1.maxHp*100),p2=Math.max(0,G.p2.hp/G.p2.maxHp*100);
@@ -694,74 +590,6 @@ if(G.p1.comboN>1&&G.p1.comboT>0){c1.style.display='block';c1.textContent=G.p1.co
 if(G.p2.comboN>1&&G.p2.comboT>0){c2.style.display='block';c2.textContent=G.p2.comboN+' HITS';}else c2.style.display='none';
 }
 
-// ===== MOBILE CONTROLS =====
-function setupMobile(){
-const mu=document.getElementById('mu');
-mu.innerHTML=`<div style="display:flex;justify-content:space-between;padding:8px 16px">
-<div style="display:grid;grid-template-columns:repeat(3,48px);grid-template-rows:repeat(3,48px);gap:2px">
-<div></div><div class="tb" data-k="arrowup">^</div><div></div>
-<div class="tb" data-k="arrowleft">&lt;</div><div class="tb" data-k="arrowdown">v</div><div class="tb" data-k="arrowright">&gt;</div>
-<div></div><div></div><div></div></div>
-<div style="display:grid;grid-template-columns:repeat(2,56px);grid-template-rows:repeat(2,48px);gap:4px">
-<div class="tb" data-k="j" style="background:#c44">LP</div><div class="tb" data-k="k" style="background:#44c">HP</div>
-<div class="tb" data-k="u" style="background:#cc4">LK</div><div class="tb" data-k="i" style="background:#4c4">HK</div>
-</div></div>`;
-mu.querySelectorAll('.tb').forEach(b=>{
-const k=b.dataset.k;
-b.style.cssText+='display:flex;align-items:center;justify-content:center;background:'+(b.style.background||'rgba(255,255,255,0.1)')+';color:#fff;border-radius:8px;font:bold 14px sans-serif;touch-action:none';
-b.addEventListener('touchstart',e=>{e.preventDefault();K[k]=1;ia();handleMenuKey(k);});
-b.addEventListener('touchend',e=>{e.preventDefault();K[k]=0;});
-});
-}
-
-// ===== LOADING & BOOT =====
-async function boot(){
-const loadBar=document.getElementById('load-bar');
-const loadText=document.getElementById('load-text');
-const loadErr=document.getElementById('load-err');
-
-try{
-loadText.textContent='Initializing Three.js...';
-loadBar.style.width='10%';
-
-const loader=new GLTFLoader();
-
-loadText.textContent='Loading fighter model...';
-loadBar.style.width='20%';
-
-baseGLTF=await new Promise((resolve,reject)=>{
-loader.load('./models/fighters/fighter_base.glb',
-gltf=>{loadBar.style.width='80%';resolve(gltf);},
-prog=>{if(prog.total>0){const pct=20+Math.round(prog.loaded/prog.total*60);loadBar.style.width=pct+'%';}},
-err=>reject(err));
-});
-
-loadText.textContent='Setting up game...';
-loadBar.style.width='90%';
-
-setupMobile();
-
-loadBar.style.width='100%';
-loadText.textContent='Ready!';
-
-await new Promise(r=>setTimeout(r,400));
-
-document.getElementById('loading').style.display='none';
-G.st='TITLE';
-const ov=document.getElementById('overlay');
-ov.classList.remove('hidden');
-ov.innerHTML='<h1>PATRIOTA</h1><h2>FIGHTER</h2><div class="sub" style="color:#444">3D CEL-SHADING ENGINE v9.0</div><div class="prompt">PRESS ANY KEY</div>';
-
-}catch(err){
-console.error('Boot error:',err);
-loadErr.style.display='block';
-loadErr.innerHTML=`Failed to load 3D model.<br><br><small>${err.message||err}</small><br><br>
-<button onclick="location.reload()" style="background:#c00;color:#fff;border:none;padding:8px 20px;border-radius:4px;cursor:pointer;font-size:1em">RETRY</button>`;
-loadBar.style.width='0%';
-loadText.textContent='';
-}
-}
-
 // ===== MAIN LOOP =====
 const clock=new THREE.Clock();
 function loop(){
@@ -770,30 +598,24 @@ const dt=Math.min(clock.getDelta(),0.05);
 
 if(hitstopF>0){hitstopF--;composer.render();return;}
 
-if(G.st==='FIGHT'||G.st==='FINISH'){
+if(G.st==='FIGHT'){
 uI();logDir();
 if(G.p1&&G.p2){
-if(G.st==='FIGHT'){
 G.timer-=dt;if(G.timer<=0){G.timer=0;endRound();}
 if(!G.p1.ai)pInput(G.p1,G.p2);
 if(G.p2.ai)aiUpd(G.p2,G.p1);
 updF(G.p1,G.p2);updF(G.p2,G.p1);
+animF(G.p1,dt);animF(G.p2,dt);
+// KO check
 if((G.p1.hp<=0||G.p2.hp<=0)&&G.st==='FIGHT'){
 const dead=G.p1.hp<=0?G.p1:G.p2;dead.state='ko';dead.dead=true;
 G.st='FINISH';announce('FINISH HIM!',3000);snd('ko');
 setTimeout(endRound,3500);}
-}
-// Always update animation
-G.p1.updateAnim(dt);G.p2.updateAnim(dt);
 // Camera
 const cx=(G.p1.x+G.p2.x)/2;const dist=Math.abs(G.p1.x-G.p2.x);
 camTarget.x=cx;camTarget.z=Math.max(4.5,dist*1.1+3);
 updHUD();
 }}
-
-if(G.st==='RESET'&&G.p1&&G.p2){
-G.p1.updateAnim(dt);G.p2.updateAnim(dt);
-}
 
 // Camera smooth follow + shake
 camera.position.x+=(camTarget.x-camera.position.x)*0.06;
@@ -814,13 +636,11 @@ setTimeout(()=>{document.getElementById('overlay').classList.remove('hidden');
 document.getElementById('overlay').innerHTML=`<h1 style="color:#DAA520">${w.c.name}</h1><h2>VICTORY</h2><div class="prompt">PRESS ANY KEY</div>`;
 document.getElementById('hud').style.display='none';},3200);}
 else{G.round++;G.st='RESET';
-setTimeout(()=>{G.p1.x=-2;G.p1.hp=G.p1.maxHp;G.p1.state='idle';G.p1.attacking=false;G.p1.dead=false;G.p1.meter=0;G.p1.mdl.position.y=0;G.p1.boneAcc={};
-G.p2.x=2;G.p2.hp=G.p2.maxHp;G.p2.state='idle';G.p2.attacking=false;G.p2.dead=false;G.p2.meter=0;G.p2.mdl.position.y=0;G.p2.boneAcc={};
-G.timer=99;G.st='FIGHT';announce('ROUND '+G.round+' \u2014 FIGHT!',2000);},2000);}
+setTimeout(()=>{G.p1.x=-2;G.p1.hp=G.p1.maxHp;G.p1.state='idle';G.p1.attacking=false;G.p1.dead=false;G.p1.meter=0;G.p1.mdl.rotation.z=0;G.p1.mdl.position.y=0;
+G.p2.x=2;G.p2.hp=G.p2.maxHp;G.p2.state='idle';G.p2.attacking=false;G.p2.dead=false;G.p2.meter=0;G.p2.mdl.rotation.z=0;G.p2.mdl.position.y=0;
+G.timer=99;G.st='FIGHT';announce('ROUND '+G.round+' — FIGHT!',2000);},2000);}
 }
 
-// Start
-boot();
 loop();
 </script>
 </body>

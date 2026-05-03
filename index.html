@@ -107,13 +107,19 @@ const UL=()=>localStorage.getItem('pf_unlocked')==='true';
 // ===== MODEL CACHE =====
 let baseGLTF=null;
 
-// ===== RENDERER (low-memory safe — no post-processing) =====
+// ===== RENDERER (WebGL1 compatible — no post-processing, no shadows) =====
 let W=window.innerWidth,H=window.innerHeight;
-const renderer=new THREE.WebGLRenderer({antialias:false,powerPreference:'default',
+let renderer;
+try{
+renderer=new THREE.WebGLRenderer({antialias:false,powerPreference:'default',
 failIfMajorPerformanceCaveat:false,preserveDrawingBuffer:false});
+}catch(e){
+document.getElementById('load-err').style.display='block';
+document.getElementById('load-err').innerHTML='WebGL not available on this device.<br><small>'+e.message+'</small><br><br><button onclick="location.reload()" style="background:#c00;color:#fff;border:none;padding:6px 16px;border-radius:4px;cursor:pointer">RETRY</button>';
+throw e;}
 renderer.setSize(W,H);renderer.setPixelRatio(1.0);
-renderer.shadowMap.enabled=true;renderer.shadowMap.type=THREE.PCFSoftShadowMap;
-renderer.toneMapping=THREE.ACESFilmicToneMapping;renderer.toneMappingExposure=1.0;
+renderer.shadowMap.enabled=false;
+renderer.toneMapping=THREE.NoToneMapping;
 renderer.outputColorSpace=THREE.SRGBColorSpace;
 document.body.prepend(renderer.domElement);
 
@@ -138,12 +144,7 @@ renderer.setSize(W,H);});
 scene.add(new THREE.AmbientLight(0x303050,0.5));
 
 const keyLight=new THREE.DirectionalLight(0xfff0dd,1.4);
-keyLight.position.set(-4,7,3);keyLight.castShadow=true;
-keyLight.shadow.mapSize.set(256,256);
-keyLight.shadow.camera.near=1;keyLight.shadow.camera.far=20;
-keyLight.shadow.camera.left=-6;keyLight.shadow.camera.right=6;
-keyLight.shadow.camera.top=5;keyLight.shadow.camera.bottom=-1;
-keyLight.shadow.bias=-0.002;
+keyLight.position.set(-4,7,3);
 scene.add(keyLight);
 
 const rimLight=new THREE.DirectionalLight(0x6688cc,0.9);
@@ -154,7 +155,7 @@ fillLight.position.set(0,2,6);scene.add(fillLight);
 
 // ===== TOON MATERIAL (Cel-Shading) =====
 const toonGrad=(()=>{const d=new Uint8Array([40,100,180,255]);
-const t=new THREE.DataTexture(d,4,1,THREE.RedFormat);
+const t=new THREE.DataTexture(d,4,1,THREE.LuminanceFormat);
 t.minFilter=THREE.NearestFilter;t.magFilter=THREE.NearestFilter;t.needsUpdate=true;return t;})();
 
 function makeToon(color,em=0x000000,emI=0){
@@ -162,19 +163,19 @@ return new THREE.MeshToonMaterial({color,gradientMap:toonGrad,emissive:em,emissi
 
 // ===== FLOOR =====
 const floorGeo=new THREE.PlaneGeometry(16,8);
-const floorMat=new THREE.MeshStandardMaterial({color:0x1a1a2e,roughness:0.6,metalness:0.3});
+const floorMat=new THREE.MeshLambertMaterial({color:0x1a1a2e,roughness:0.6,metalness:0.3});
 const floor=new THREE.Mesh(floorGeo,floorMat);
-floor.rotation.x=-Math.PI/2;floor.receiveShadow=true;scene.add(floor);
+floor.rotation.x=-Math.PI/2;floor;scene.add(floor);
 const gridHelper=new THREE.GridHelper(16,32,0x111122,0x0a0a15);
 gridHelper.position.y=0.001;scene.add(gridHelper);
 
 // ===== BACKGROUND =====
 for(let i=-3;i<=3;i+=2){
 const pGeo=new THREE.CylinderGeometry(0.15,0.15,4,8);
-const pMat=new THREE.MeshStandardMaterial({color:0x1a1a30,roughness:0.4,metalness:0.5});
-const p=new THREE.Mesh(pGeo,pMat);p.position.set(i*1.5,2,-3);p.castShadow=true;scene.add(p);}
+const pMat=new THREE.MeshLambertMaterial({color:0x1a1a30,roughness:0.4,metalness:0.5});
+const p=new THREE.Mesh(pGeo,pMat);p.position.set(i*1.5,2,-3);scene.add(p);}
 const wallGeo=new THREE.PlaneGeometry(16,5);
-const wallMat=new THREE.MeshStandardMaterial({color:0x141428,roughness:0.9});
+const wallMat=new THREE.MeshLambertMaterial({color:0x141428,roughness:0.9});
 const wall=new THREE.Mesh(wallGeo,wallMat);wall.position.set(0,2.5,-3.5);scene.add(wall);
 
 // ===== 12 CHARACTERS =====
@@ -310,7 +311,7 @@ mdl.traverse(child=>{
 if(child.isMesh){
 if(child.name==='vanguard_visor')child.material=visorMat;
 else child.material=bodyMat;
-child.castShadow=true;child.receiveShadow=true;
+child;child;
 }});
 
 // Find bones
@@ -347,7 +348,7 @@ const cG=new THREE.PlaneGeometry(0.4*sc,0.5*sc,2,5);
 const cM=makeToon(c.color2);cM.side=THREE.DoubleSide;
 const cape=new THREE.Mesh(cG,cM);
 cape.position.set(0,-0.1,-0.15);
-cape.castShadow=true;
+cape;
 this.bones.Spine2.add(cape);
 this.capeObj=cape;
 }
@@ -356,8 +357,8 @@ this.capeObj=cape;
 if(c.padSize>0&&this.bones.LeftShoulder&&this.bones.RightShoulder){
 const padGeo=new THREE.SphereGeometry(0.06*c.padSize,8,6,0,Math.PI*2,0,Math.PI*0.6);
 const padMat=makeToon(c.color2,c.color2,0.15);
-const lPad=new THREE.Mesh(padGeo,padMat);lPad.castShadow=true;
-const rPad=new THREE.Mesh(padGeo,padMat);rPad.castShadow=true;
+const lPad=new THREE.Mesh(padGeo,padMat);lPad;
+const rPad=new THREE.Mesh(padGeo,padMat);rPad;
 this.bones.LeftShoulder.add(lPad);
 this.bones.RightShoulder.add(rPad);
 }

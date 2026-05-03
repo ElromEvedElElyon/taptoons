@@ -177,7 +177,7 @@ const t=new THREE.DataTexture(d,4,1,THREE.RedFormat);
 t.minFilter=THREE.NearestFilter;t.magFilter=THREE.NearestFilter;t.needsUpdate=true;return t;})();
 
 function makeToon(color,em=0x000000,emI=0){
-return new THREE.MeshToonMaterial({color,gradientMap:toonGrad,emissive:em,emissiveIntensity:emI});}
+return new THREE.MeshToonMaterial({color,gradientMap:toonGrad,emissive:em,emissiveIntensity:emI,side:THREE.DoubleSide});}
 
 // ===== FLOOR =====
 const floorGeo=new THREE.PlaneGeometry(16,8);
@@ -313,12 +313,11 @@ this.hit=false;this.hitT=0;this.blocking=false;this.dead=false;
 this.comboN=0;this.comboD=0;this.comboT=0;this.wins=0;this.ai=false;this.aiT=0;
 
 // Clone 3D model
+baseGLTF.scene.updateMatrixWorld(true);
 const mdl=SkeletonUtils.clone(baseGLTF.scene);
 
-// Scale to character height
-const box=new THREE.Box3().setFromObject(mdl);
-const h=box.max.y-box.min.y;
-const sc=(c.body.height/180)*(1.8/h);
+// Scale to character height — model is ~1.8m at native scale (root node has 0.01 scale)
+const sc=c.body.height/180;
 mdl.scale.setScalar(sc);
 this.baseScale=sc;
 
@@ -573,7 +572,7 @@ f.attacking=true;f.atk=m;f.atkF=0;f.state='attack';snd(m==='lp'||m==='lk'?'hit_l
 function updF(f,o){
 f.anim+=0.016;
 if(f.y>0||f.vy!==0){f.vy-=0.02;f.y+=f.vy;if(f.y<=0){f.y=0;f.vy=0;}}
-f.mdl.position.y=Math.max(f.mdl.position.y,0)+f.y;
+if(!f.dead)f.mdl.position.y=f.y;
 f.x=Math.max(-4.5,Math.min(4.5,f.x));
 if(f.attacking){const mv=MV[f.atk];if(!mv){f.attacking=false;return;}
 f.atkF++;
